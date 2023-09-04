@@ -1,3 +1,4 @@
+import 'package:cars_app/presentation/widgets/shared/row_widget.dart';
 import 'package:flutter/material.dart';
 
 class CustomersScreen extends StatelessWidget {
@@ -9,7 +10,36 @@ class CustomersScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Customers'),
       ),
-      body: const Placeholder(),
+      body: const Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 15,
+            horizontal: 20,
+          ),
+          child: Column(
+            children: [
+              TableRecord(),
+              TableRecord(),
+              TableRecord(),
+              TableRecord(),
+              TableRecord(),
+              TableRecord(),
+            ],
+          )),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {},
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 10,
+              ),
+              child: Icon(Icons.add_outlined),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
