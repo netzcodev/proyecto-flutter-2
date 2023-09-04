@@ -14,16 +14,16 @@ class MenuItem {
   });
 }
 
-const appMenuItem = <MenuItem>[
+const appMenuItems = <MenuItem>[
   MenuItem(
     title: 'Customers',
-    subTitle: 'Módulo de clientes',
+    subTitle: 'Manage Customers',
     link: '/customers',
     icon: Icons.smart_button_outlined,
   ),
   MenuItem(
     title: 'Users',
-    subTitle: 'Módulo de clientes',
+    subTitle: 'Manage users',
     link: '/users',
     icon: Icons.person_2_outlined,
   ),
