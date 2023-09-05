@@ -27,10 +27,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await authRepository.login(email, password);
       _setLoggedUser(user);
-    } on WrongCredential {
-      logout(error: 'Credenciales incorrectas');
-    } on ConnetionTimeOut {
-      logout(error: 'Time Out');
+    } on CustomError catch (e) {
+      logout(error: e.message);
     } catch (e) {
       logout(error: 'Algo salió mal... Error no controlado');
     }

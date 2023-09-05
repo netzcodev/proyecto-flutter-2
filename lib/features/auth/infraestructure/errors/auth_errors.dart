@@ -1,12 +1,6 @@
-class WrongCredential implements Exception {}
-
-class InvalidToken implements Exception {}
-
-class ConnetionTimeOut implements Exception {}
-
 class CustomError implements Exception {
   final String message;
-  final int code;
+  final bool loogedRequired;
 
-  CustomError(this.message, this.code);
+  CustomError(this.message, [this.loogedRequired = false]);
 }
