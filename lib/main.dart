@@ -1,5 +1,5 @@
+import 'package:cars_app/config/config.dart';
 import 'package:cars_app/config/router/app_router.dart';
-import 'package:cars_app/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme(selectedColor: 1).getTheme(),
+      theme: AppTheme().getTheme(),
     );
   }
 }

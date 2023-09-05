@@ -1,4 +1,3 @@
-import 'package:cars_app/presentation/widgets/shared/row_widget.dart';
 import 'package:flutter/material.dart';
 
 class CustomersScreen extends StatelessWidget {
@@ -16,14 +15,7 @@ class CustomersScreen extends StatelessWidget {
             horizontal: 20,
           ),
           child: Column(
-            children: [
-              TableRecord(),
-              TableRecord(),
-              TableRecord(),
-              TableRecord(),
-              TableRecord(),
-              TableRecord(),
-            ],
+            children: [],
           )),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
