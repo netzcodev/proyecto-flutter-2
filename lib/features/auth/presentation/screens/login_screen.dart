@@ -58,7 +58,7 @@ class _LoginForm extends StatelessWidget {
         children: [
           const SizedBox(height: 50),
           Text('Login', style: textStyles.titleLarge),
-          const SizedBox(height: 90),
+          const SizedBox(height: 50),
           const CustomTextFormField(
             label: 'Correo',
             keyboardType: TextInputType.emailAddress,
