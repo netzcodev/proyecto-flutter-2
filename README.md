@@ -5,12 +5,6 @@ Repositorio para el codigo fuente del front de la aplicación movil
 
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 
-**Ejemplo de Home:**
-![Vista home](./assets/ej1.jpg)
-
-**Ejemplo de Crud:**
-![Vista crud](./assets/ej2.jpg)
-
 
 ### TODO 📃
 - Entidades, Repositorios, Datasource.
