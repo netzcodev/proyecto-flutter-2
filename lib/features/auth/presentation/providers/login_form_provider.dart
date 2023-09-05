@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -5,12 +6,20 @@ import 'package:formz/formz.dart';
 //! 3 - StateNotifierProvider - se consume afuera.
 final loginFormProvider =
     StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
-  return LoginFormNotifier();
+  final loginUserCallback = ref.watch(authProvider.notifier).loginUser;
+
+  return LoginFormNotifier(
+    loginUserCallback: loginUserCallback,
+  );
 });
 
 //! 2 - Como implementamos un notifiert.
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
-  LoginFormNotifier() : super(LoginFormState());
+  final Function(String, String) loginUserCallback;
+
+  LoginFormNotifier({
+    required this.loginUserCallback,
+  }) : super(LoginFormState());
 
   onEmailChange(String value) {
     final newEmail = Email.dirty(value);
@@ -31,11 +40,11 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     );
   }
 
-  onFormSubmit() {
+  onFormSubmit() async {
     _touchEveryField();
 
     if (!state.isValid) return;
-    print(state);
+    await loginUserCallback(state.email.value, state.password.value);
   }
 
   _touchEveryField() {
