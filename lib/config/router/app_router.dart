@@ -31,7 +31,7 @@ final goRouterProvider = Provider((ref) {
       ),
       GoRoute(
         path: '/',
-        builder: (context, state) => const DashboardScreen(),
+        builder: (context, state) => const PeopleScreen(),
       ),
       GoRoute(
         path: '/dashboard',
@@ -52,6 +52,12 @@ final goRouterProvider = Provider((ref) {
       GoRoute(
         path: '/people',
         builder: (context, state) => const PeopleScreen(),
+      ),
+      GoRoute(
+        path: '/people/:id',
+        builder: (context, state) => PersonScreen(
+          peopleId: int.parse(state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/permissions',
@@ -104,7 +110,11 @@ final goRouterProvider = Provider((ref) {
       }
 
       if (authStatus == AuthStatus.authenticated) {
-        if (isGoingTo == '/login' || isGoingTo == '/register') return '/';
+        if (isGoingTo == '/login' ||
+            isGoingTo == '/register' ||
+            isGoingTo == '/splash') {
+          return '/';
+        }
       }
 
       return null;
