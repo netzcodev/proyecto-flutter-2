@@ -49,7 +49,7 @@ class AuthDataSourceImpl extends AuthDataSource {
       final user = UserMapper.userJsonToEntity(response.data);
       return user;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
         throw CustomError(
           e.response?.data['message'] ?? 'Credenciales Iconrrectas',
         );
