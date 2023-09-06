@@ -1,0 +1,1 @@
+class PersonNotFound implements Exception {}

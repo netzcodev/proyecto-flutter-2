@@ -1,6 +1,6 @@
 import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/people/domain/domain.dart';
-import 'package:cars_app/features/people/infraestructure/mappers/people_mapper.dart';
+import 'package:cars_app/features/people/infraestructure/infraestructure.dart';
 import 'package:dio/dio.dart';
 
 class PeopleDatasourceImpl extends PeopleDatasource {
@@ -29,9 +29,17 @@ class PeopleDatasourceImpl extends PeopleDatasource {
   }
 
   @override
-  Future<People> getPeopleById(int id) {
-    // TODO: implement getPeopleById
-    throw UnimplementedError();
+  Future<People> getPeopleById(int id) async {
+    try {
+      final response = await dio.get('/people/$id');
+      final person = PeopleMapper.jsonToEntity(response.data);
+      return person;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 404) throw PersonNotFound();
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
   }
 
   @override

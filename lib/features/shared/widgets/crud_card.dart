@@ -1,4 +1,3 @@
-import 'package:cars_app/features/people/domain/domain.dart';
 import 'package:flutter/material.dart';
 
 class CrudCard<T> extends StatelessWidget {
