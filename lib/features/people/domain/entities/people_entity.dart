@@ -6,6 +6,11 @@ class People {
   String name;
   String lastName;
   String phone;
+  String email;
+  String password;
+  String photo;
+  String status;
+  int userId;
   String createdAt;
   String updatedAt;
 
@@ -15,6 +20,11 @@ class People {
     required this.name,
     required this.lastName,
     required this.phone,
+    required this.email,
+    required this.password,
+    required this.photo,
+    required this.status,
+    required this.userId,
     required this.createdAt,
     required this.updatedAt,
   });
