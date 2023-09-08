@@ -17,9 +17,30 @@ class PeopleDatasourceImpl extends PeopleDatasource {
         );
 
   @override
-  Future<People> createUpdatePeople(Map<String, dynamic> peopleLike) {
-    // TODO: implement createUpdatePeople
-    throw UnimplementedError();
+  Future<People> createUpdatePeople(Map<String, dynamic> peopleLike) async {
+    try {
+      final int? personId = peopleLike['id'];
+      final String method = (personId == null) ? 'POST' : 'PATCH';
+      peopleLike.remove('id');
+      final String url = (personId == null) ? '/people/' : '/people/$personId';
+      if (personId == 0) {
+        peopleLike['password'] = peopleLike['document'] == 0
+            ? Environment.standartPassword
+            : '${peopleLike['document']}';
+      }
+      final response = await dio.request(
+        url,
+        data: peopleLike,
+        options: Options(
+          method: method,
+        ),
+      );
+
+      final person = PeopleMapper.jsonToEntity(response.data);
+      return person;
+    } catch (e) {
+      throw Exception();
+    }
   }
 
   @override

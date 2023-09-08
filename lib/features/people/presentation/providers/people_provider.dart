@@ -17,6 +17,28 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
     loadNextPage();
   }
 
+  Future<bool> createOrUpdatePeople(Map<String, dynamic> peopleLike) async {
+    try {
+      final person = await peopleRepository.createUpdatePeople(peopleLike);
+      final isPersonInList =
+          state.people.any((element) => element.id == person.id);
+
+      if (!isPersonInList) {
+        state = state.copyWith(people: [...state.people, person]);
+        return true;
+      }
+
+      state = state.copyWith(
+        people: state.people
+            .map((element) => (element.id == person.id) ? person : element)
+            .toList(),
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future loadNextPage() async {
     if (state.isLoading || state.isLastPage) return;
 

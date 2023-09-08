@@ -23,7 +23,9 @@ class PeopleScreen extends StatelessWidget {
       ),
       body: const _PeopleView(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          context.push('/people/0');
+        },
         label: const Text('persona'),
         icon: const Icon(Icons.add),
       ),

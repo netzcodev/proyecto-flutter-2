@@ -20,8 +20,31 @@ class PersonNotifier extends StateNotifier<PersonState> {
     loadPerson();
   }
 
+  People _newEmptyPerson() {
+    return People(
+      id: 0,
+      document: 0,
+      name: '',
+      lastName: '',
+      phone: '',
+      email: '',
+      photo: '',
+      status: 'A',
+      userId: 2,
+      role: 'cliente',
+    );
+  }
+
   Future<void> loadPerson() async {
     try {
+      if (state.id == 0) {
+        state = state.copyWith(
+          isLoading: false,
+          people: _newEmptyPerson(),
+        );
+        return;
+      }
+
       final person = await peopleRepository.getPeopleById(state.id);
 
       state = state.copyWith(

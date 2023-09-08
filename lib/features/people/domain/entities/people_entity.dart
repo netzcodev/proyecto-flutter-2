@@ -7,12 +7,13 @@ class People {
   String lastName;
   String phone;
   String email;
-  String password;
+  String? password;
   String photo;
   String status;
   int userId;
-  String createdAt;
-  String updatedAt;
+  String role;
+  String? createdAt;
+  String? updatedAt;
 
   People({
     required this.id,
@@ -21,12 +22,13 @@ class People {
     required this.lastName,
     required this.phone,
     required this.email,
-    required this.password,
     required this.photo,
     required this.status,
     required this.userId,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.role,
+    this.createdAt,
+    this.updatedAt,
+    this.password,
   });
 
   @override
