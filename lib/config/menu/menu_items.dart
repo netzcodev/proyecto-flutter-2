@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show IconData, Icons;
+import 'package:flutter/material.dart';
 
 class MenuItem {
   final String title;
@@ -14,7 +14,7 @@ class MenuItem {
   });
 }
 
-const appMenuItems = <MenuItem>[
+const globalMenuItems = <MenuItem>[
   MenuItem(
     title: 'Dashboard',
     subTitle: 'See Dashboard',
@@ -32,12 +32,6 @@ const appMenuItems = <MenuItem>[
     subTitle: 'Manage Employees',
     link: '/employees',
     icon: Icons.business_center_outlined,
-  ),
-  MenuItem(
-    title: 'Menu',
-    subTitle: 'Manage Menu',
-    link: '/menu',
-    icon: Icons.menu_book_outlined,
   ),
   MenuItem(
     title: 'People',

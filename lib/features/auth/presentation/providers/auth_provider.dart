@@ -1,5 +1,6 @@
 import 'package:cars_app/features/auth/domain/domain.dart';
 import 'package:cars_app/features/auth/infraestructure/infraestructure.dart';
+import 'package:cars_app/features/permissions/domain/domain.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:cars_app/features/users/users.dart';

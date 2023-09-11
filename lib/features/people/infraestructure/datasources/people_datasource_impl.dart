@@ -23,7 +23,7 @@ class PeopleDatasourceImpl extends PeopleDatasource {
       final String method = (personId == null) ? 'POST' : 'PATCH';
       peopleLike.remove('id');
       final String url = (personId == null) ? '/people/' : '/people/$personId';
-      if (personId == 0) {
+      if (personId == null) {
         peopleLike['password'] = peopleLike['document'] == 0
             ? Environment.standartPassword
             : '${peopleLike['document']}';

@@ -1,7 +1,9 @@
+import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -19,7 +21,22 @@ class SideMenuState extends ConsumerState<SideMenu> {
   Widget build(BuildContext context) {
     final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
     final textStyles = Theme.of(context).textTheme;
+    final loginState = ref.read(authProvider);
+    List<MenuItem> appMenuItems = [];
 
+    appMenuItems = globalMenuItems.map(
+      (e) {
+        for (var element in loginState.user!.menu!) {
+          if (element.menuName?.toLowerCase() == e.title.toLowerCase()) {
+            return e;
+          }
+        }
+
+        return e;
+      },
+    ).toList();
+
+    print(appMenuItems);
     return NavigationDrawer(
         elevation: 1,
         selectedIndex: navDrawerIndex,
@@ -28,8 +45,8 @@ class SideMenuState extends ConsumerState<SideMenu> {
             navDrawerIndex = value;
           });
 
-          // final menuItem = appMenuItems[value];
-          // context.push( menuItem.link );
+          final menuItem = appMenuItems[value];
+          context.push(menuItem.link);
           widget.scaffoldKey.currentState?.closeDrawer();
         },
         children: [
@@ -39,15 +56,14 @@ class SideMenuState extends ConsumerState<SideMenu> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
-            child: Text('Tony Stark', style: textStyles.titleSmall),
+            child:
+                Text(loginState.user!.fullName, style: textStyles.titleSmall),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.home_outlined),
-            label: Text('Dashboard'),
-          ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.person_outline),
-            label: Text('Personas'),
+          ...appMenuItems.map(
+            (item) => NavigationDrawerDestination(
+              icon: Icon(item.icon),
+              label: Text(item.title),
+            ),
           ),
           const Padding(
             padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
