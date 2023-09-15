@@ -70,4 +70,18 @@ class VehiclesDatasourceImpl extends VehiclesDatasource {
 
     return vehicles;
   }
+
+  @override
+  Future<Map<String, dynamic>> deleteVehicle(int id) async {
+    try {
+      final response = await dio.delete('/vehicles/$id');
+      final deletedVehicle = response.data;
+      return deletedVehicle;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 404) throw VehicleNotFound();
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
+  }
 }

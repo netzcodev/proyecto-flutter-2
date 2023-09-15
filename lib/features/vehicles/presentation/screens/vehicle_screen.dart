@@ -1,4 +1,6 @@
-import 'package:cars_app/features/customers/presentation/providers/customers_provider.dart';
+import 'package:cars_app/config/config.dart';
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
+import 'package:cars_app/features/people/presentation/providers/people_provider.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter/services.dart';
@@ -15,8 +17,9 @@ class VehicleScreen extends ConsumerWidget {
 
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Persona Actualizada')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content:
+            Text('Vehiculo ${vechicleId == 0 ? 'Creado' : 'Actualizado'}')));
   }
 
   @override
@@ -27,7 +30,8 @@ class VehicleScreen extends ConsumerWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Editar Vehiculo'),
+          title: Text(
+              '${vehicleState.vehicle?.id == 0 ? 'Crear' : 'Actualizar'} Vehiculo'),
           actions: [
             IconButton(
               onPressed: () {},
@@ -35,7 +39,9 @@ class VehicleScreen extends ConsumerWidget {
             )
           ],
         ),
-        body: const _VehicleView(),
+        body: vehicleState.isLoading
+            ? const FullScreenLoader()
+            : _VehicleView(vehicle: vehicleState.vehicle!),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (vehicleState.vehicle == null) return;
@@ -46,7 +52,7 @@ class VehicleScreen extends ConsumerWidget {
               (value) {
                 if (!value) return;
                 showSnackbar(context);
-                context.push('/vehicles');
+                ref.read(goRouterProvider).go('/vehicles');
               },
             );
           },
@@ -58,41 +64,56 @@ class VehicleScreen extends ConsumerWidget {
 }
 
 class _VehicleView extends ConsumerWidget {
-  // final Vehicle vehicle;
+  final Vehicle vehicle;
 
-  const _VehicleView(
-      // {
-      // required this.vehicle,
-      // }
-      );
+  const _VehicleView({
+    required this.vehicle,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final personForm = ref.watch(personFormProvider(person));
+    final vehicleForm = ref.watch(vehicleFormProvider(vehicle));
     final textStyles = Theme.of(context).textTheme;
 
     return ListView(
       children: [
-        const _PlateField(placa: ''),
+        _PlateField(
+          placa: vehicle.plate,
+          onChanged:
+              ref.read(vehicleFormProvider(vehicle).notifier).onPlateChanged,
+          errorMessage: vehicleForm.plate.errorMessage,
+        ),
         const SizedBox(height: 10),
-        Center(child: Text('', style: textStyles.titleSmall)),
+        Center(
+          child: Text(
+            '${vehicle.manufacturer} ${vehicle.name}',
+            style: textStyles.titleSmall,
+          ),
+        ),
         const SizedBox(height: 10),
-        const _VehicleInformation(),
+        _VehicleInformation(vehicle: vehicle),
       ],
     );
   }
 }
 
 class _VehicleInformation extends ConsumerWidget {
-  // final Vehicle vehicle;
-  const _VehicleInformation(
-      // {required this.vehicle}
-      );
+  final Vehicle vehicle;
+  const _VehicleInformation({required this.vehicle});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final vehicleForm = ref.watch(personFormProvider(vehicle));
-    final customerState = ref.watch(customersProvider);
+    final vehicleForm = ref.watch(vehicleFormProvider(vehicle));
+    final customersList = ref
+        .watch(peopleProvider)
+        .people
+        .where((element) => element.roleId == 2)
+        .toList();
+    final permissions = ref
+        .watch(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'Vehicles');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -101,81 +122,82 @@ class _VehicleInformation extends ConsumerWidget {
         children: [
           const Text('Datos:'),
           const SizedBox(height: 15),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             isTopField: true,
             label: 'Nombre',
-            initialValue: '',
-            // onChanged:
-            //     ref.watch(personFormProvider(vehicle).notifier).onNameChanged,
-            // errorMessage: personForm.fullName.errorMessage,
+            initialValue: vehicleForm.name.value,
+            onChanged:
+                ref.read(vehicleFormProvider(vehicle).notifier).onNameChanged,
+            errorMessage: vehicleForm.name.errorMessage,
           ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Fabricante',
-            initialValue: '',
-            // onChanged: (value) => ref
-            //     .read(personFormProvider(vehicle).notifier)
-            //     .onDocumentChanged(int.tryParse(value) ?? -1),
-            // errorMessage: personForm.document.errorMessage,
+            initialValue: vehicleForm.manufacturer,
+            onChanged: ref
+                .read(vehicleFormProvider(vehicle).notifier)
+                .onManufacturerChanged,
           ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Modelo',
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
+            initialValue: vehicleForm.model,
+            onChanged:
+                ref.read(vehicleFormProvider(vehicle).notifier).onModelChanged,
           ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Combustible',
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
+            initialValue: vehicleForm.fuel.value,
+            onChanged:
+                ref.read(vehicleFormProvider(vehicle).notifier).onFuelChanged,
+            errorMessage: vehicleForm.fuel.errorMessage,
           ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Tipo',
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
+            initialValue: vehicleForm.type,
+            onChanged:
+                ref.read(vehicleFormProvider(vehicle).notifier).onTypeChanged,
           ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Color',
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
+            initialValue: vehicleForm.color,
+            onChanged:
+                ref.read(vehicleFormProvider(vehicle).notifier).onColorChanged,
           ),
-          const CustomFormField(
-            label: 'Kilometraje',
-            keyboardType: TextInputType.numberWithOptions(decimal: false),
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
-          ),
-          const CustomFormField(
+          CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             isBottomField: true,
-            label: 'Identificación',
-            initialValue: '',
-            // onChanged:
-            //     ref.read(personFormProvider(vehicle).notifier).onEmailChanged,
-            // errorMessage: personForm.email.errorMessage,
+            label: 'Kilometraje',
+            keyboardType: const TextInputType.numberWithOptions(decimal: false),
+            initialValue: vehicleForm.mileage.value == 0
+                ? ''
+                : vehicleForm.mileage.value.toString(),
+            onChanged: (value) => ref
+                .read(vehicleFormProvider(vehicle).notifier)
+                .onMileageChanged(int.tryParse(value) ?? -1),
           ),
           const SizedBox(height: 15),
           OwnerDropdown(
-            entityList: customerState.customers,
+            enabled: permissions.modify == 1 ? true : false,
+            entityList: customersList,
             displayNameFunction: null,
-            onSelected: (p0) {
-              print(p0);
-              return p0 as int;
-            },
             label: 'Propietario',
+            selected: vehicleForm.customerId.value,
+            onSelected: (value) => ref
+                .read(vehicleFormProvider(vehicle).notifier)
+                .onOwnerChanged(value ?? -1),
+            errorMessage: vehicleForm.customerId.errorMessage,
           ),
           const SizedBox(height: 25),
-          const _StatusSelector(
-            status: 'A',
-            onStatusChanged: null,
-          ),
+          if (ref.watch(authProvider).user!.isAdmin)
+            const _StatusSelector(
+              status: 'A',
+              onStatusChanged: null,
+            ),
           const SizedBox(height: 25),
         ],
       ),
@@ -260,7 +282,14 @@ class _CustomBadge extends StatelessWidget {
 
 class _PlateField extends StatelessWidget {
   final String placa;
-  const _PlateField({required this.placa});
+  final String? errorMessage;
+  final void Function(String)? onChanged;
+
+  const _PlateField({
+    required this.placa,
+    this.errorMessage,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +304,9 @@ class _PlateField extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TextField(
+          child: TextFormField(
+            initialValue: placa,
+            onChanged: onChanged,
             obscureText: false,
             textAlign: TextAlign.center,
             textCapitalization: TextCapitalization.characters,
@@ -287,16 +318,17 @@ class _PlateField extends StatelessWidget {
               letterSpacing: 8,
               color: Colors.black,
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'ABC123',
-              border: OutlineInputBorder(
+              errorText: errorMessage,
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black,
                   style: BorderStyle.solid,
                 ),
               ),
               counterText: '',
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),

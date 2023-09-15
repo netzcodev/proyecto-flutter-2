@@ -7,9 +7,8 @@ class Vehicle {
   final String type;
   final String color;
   final int mileage;
-  final String vId;
   final String plate;
-  final int owner;
+  final int customerId;
   final String? createdAt;
   final String? updatedAt;
 
@@ -22,9 +21,8 @@ class Vehicle {
     required this.type,
     required this.color,
     required this.mileage,
-    required this.vId,
     required this.plate,
-    required this.owner,
+    required this.customerId,
     this.createdAt,
     this.updatedAt,
   });

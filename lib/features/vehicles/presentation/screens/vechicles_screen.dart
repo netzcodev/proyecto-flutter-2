@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,12 @@ class _VehiclesViewState extends ConsumerState {
     super.dispose();
   }
 
+  void showSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Vehiculo Eliminado')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final vehicleState = ref.watch(vehiclesProvider);
@@ -69,7 +76,7 @@ class _VehiclesViewState extends ConsumerState {
       child: AlignedGridView.count(
         controller: scrollController,
         physics: const BouncingScrollPhysics(),
-        crossAxisCount: 1,
+        crossAxisCount: 2,
         mainAxisSpacing: 20,
         crossAxisSpacing: 20,
         itemCount: vehicleState.vehicles.length,
@@ -77,7 +84,15 @@ class _VehiclesViewState extends ConsumerState {
           final vehicle = vehicleState.vehicles[index];
           return GestureDetector(
             child: _VehicleCard(
-              plate: vehicle.plate,
+              vehicle: vehicle,
+              onDeleteCallback: (value) {
+                ref.watch(vehiclesProvider.notifier).deleteVehicle(value!).then(
+                  (value) {
+                    if (!value) return;
+                    showSnackbar(context);
+                  },
+                );
+              },
             ),
             onTap: () => context.push('/vehicles/${vehicle.id}'),
           );
@@ -87,32 +102,57 @@ class _VehiclesViewState extends ConsumerState {
   }
 }
 
-class _VehicleCard extends StatelessWidget {
-  final String plate;
+class _VehicleCard extends ConsumerWidget {
+  final Vehicle vehicle;
+  final void Function(int?)? onDeleteCallback;
 
-  const _VehicleCard({required this.plate});
+  const _VehicleCard({
+    required this.vehicle,
+    this.onDeleteCallback,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final permissions = ref
+        .watch(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'Vehicles');
     return Container(
       width: 300, // Ancho de la tarjeta
-      height: 150, // Alto de la tarjeta
+      height: 70, // Alto de la tarjeta
       decoration: BoxDecoration(
-        color: Colors.yellow, // Fondo amarillo
+        color: Colors.amber,
+        borderRadius:
+            const BorderRadius.all(Radius.circular(10)), // Fondo amarillo
         border: Border.all(
+          style: BorderStyle.solid,
           color: Colors.black, // Borde negro
           width: 2.0, // Ancho del borde
         ),
       ),
-      child: Center(
-        child: Text(
-          plate,
-          // ignore: prefer_const_constructors
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+      child: Row(
+        children: [
+          const SizedBox(width: 15),
+          Center(
+            child: Text(
+              vehicle.plate,
+              // ignore: prefer_const_constructors
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
+          const Spacer(),
+          if (permissions.remove == 1)
+            IconButton(
+              onPressed: () {
+                onDeleteCallback!(vehicle.id);
+              },
+              icon: const Icon(Icons.delete_outline_outlined),
+            )
+        ],
       ),
     );
   }

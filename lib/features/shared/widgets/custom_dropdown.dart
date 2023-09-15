@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 class OwnerDropdown extends StatefulWidget {
   final List<People> entityList;
+  final String? errorMessage;
+  final bool? enabled;
   final String label;
   final String Function(People)? displayNameFunction;
-  final int Function(int?)? onSelected;
+  final void Function(int?)? onSelected;
   final People? selectedEntity;
+  final int? selected;
 
   const OwnerDropdown({
     super.key,
@@ -15,6 +18,9 @@ class OwnerDropdown extends StatefulWidget {
     this.onSelected,
     required this.label,
     this.selectedEntity,
+    this.errorMessage,
+    this.enabled = true,
+    this.selected,
   });
 
   @override
@@ -41,6 +47,7 @@ class _CustomDropdownState<People> extends State<OwnerDropdown> {
     return Center(
       child: DropdownMenu<int>(
         controller: textContoller,
+        errorText: widget.errorMessage,
         inputDecorationTheme: const InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
@@ -50,8 +57,9 @@ class _CustomDropdownState<People> extends State<OwnerDropdown> {
         label: Text(widget.label),
         dropdownMenuEntries: entries,
         hintText: 'Selecciona',
-        enabled: true,
+        enabled: widget.enabled!,
         onSelected: widget.onSelected,
+        initialSelection: widget.selected,
       ),
     );
   }

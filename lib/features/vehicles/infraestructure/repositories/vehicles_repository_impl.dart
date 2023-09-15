@@ -24,4 +24,9 @@ class VehiclesRepositoryImpl extends VehiclesRepository {
   Future<List<Vehicle>> getVehiclesByPage({int limit = 10, int offset = 0}) {
     return datasource.getVehiclesByPage(limit: limit, offset: offset);
   }
+
+  @override
+  Future<Map<String, dynamic>> deleteVehicle(int id) {
+    return datasource.deleteVehicle(id);
+  }
 }

@@ -128,6 +128,7 @@ class PersonFormNotifier extends StateNotifier<PersonFormState> {
 }
 
 class PersonFormState {
+  final bool isPosting;
   final bool disableAll;
   final bool isValidForm;
   final int? id;
@@ -140,6 +141,7 @@ class PersonFormState {
   final Name fullName;
 
   PersonFormState({
+    this.isPosting = false,
     this.disableAll = false,
     this.isValidForm = false,
     this.id,
@@ -153,6 +155,7 @@ class PersonFormState {
   });
 
   PersonFormState copyWith({
+    bool? isPosting,
     bool? disableAll,
     bool? isValidForm,
     int? id,
@@ -167,6 +170,7 @@ class PersonFormState {
     Name? fullName,
   }) =>
       PersonFormState(
+        isPosting: isPosting ?? this.isPosting,
         disableAll: disableAll ?? this.disableAll,
         isValidForm: isValidForm ?? this.isValidForm,
         id: id ?? this.id,

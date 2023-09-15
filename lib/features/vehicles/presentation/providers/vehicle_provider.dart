@@ -30,9 +30,8 @@ class VehicleNotifier extends StateNotifier<VehicleState> {
       type: '',
       color: '',
       mileage: 0,
-      vId: '',
       plate: '',
-      owner: 0,
+      customerId: 0,
     );
   }
 

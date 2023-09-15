@@ -10,9 +10,8 @@ class VehicleMapper {
         type: json['type'] ?? '',
         color: json['color'] ?? '',
         mileage: json['mileage'],
-        vId: json['vId'],
         plate: json['plate'],
-        owner: json['owner'],
+        customerId: json['customerId'],
         createdAt: json['createdAt'],
         updatedAt: json['updatedAt'],
       );

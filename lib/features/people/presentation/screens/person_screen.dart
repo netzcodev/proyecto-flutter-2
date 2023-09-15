@@ -1,3 +1,4 @@
+import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/shared/shared.dart';
@@ -22,7 +23,7 @@ class PersonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final personState = ref.watch(personProvider(peopleId));
     final permissions = ref
-        .watch(authProvider)
+        .read(authProvider)
         .user!
         .menu!
         .firstWhere((element) => element.menuName == 'People');
@@ -53,7 +54,7 @@ class PersonScreen extends ConsumerWidget {
               (value) {
                 if (!value) return;
                 showSnackbar(context);
-                context.push('/people');
+                ref.read(goRouterProvider).go('/people');
               },
             );
           },
@@ -99,7 +100,7 @@ class _PersonInformation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final personForm = ref.watch(personFormProvider(person));
-    final authState = ref.watch(authProvider);
+    final authState = ref.read(authProvider);
     final permissions = ref
         .watch(authProvider)
         .user!
@@ -127,7 +128,7 @@ class _PersonInformation extends ConsumerWidget {
             label: 'Nombre',
             initialValue: personForm.fullName.value,
             onChanged:
-                ref.watch(personFormProvider(person).notifier).onNameChanged,
+                ref.read(personFormProvider(person).notifier).onNameChanged,
             errorMessage: personForm.fullName.errorMessage,
           ),
           CustomFormField(

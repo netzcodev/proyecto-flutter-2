@@ -97,7 +97,6 @@ class _PeopleViewState extends ConsumerState {
               onDeleteCallback: (value) {
                 ref.watch(peopleProvider.notifier).deletePeople(value!).then(
                   (value) {
-                    print(value);
                     if (!value) return;
                     showSnackbar(context);
                     // context.push('/people');

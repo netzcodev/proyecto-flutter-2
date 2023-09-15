@@ -25,16 +25,15 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
   }) : super(
           VehicleFormState(
             id: vehicle.id,
-            name: vehicle.name,
+            name: VehicleName.dirty(vehicle.name),
             manufacturer: vehicle.manufacturer,
             model: vehicle.model,
-            fuel: vehicle.fuel,
+            fuel: Fuel.dirty(vehicle.fuel),
             type: vehicle.type,
             color: vehicle.color,
-            mileage: vehicle.mileage,
-            vId: vehicle.vId,
+            mileage: Mileage.dirty(vehicle.mileage),
             plate: Plate.dirty(vehicle.plate),
-            owner: Select.dirty(vehicle.owner),
+            customerId: Select.dirty(vehicle.customerId),
           ),
         );
 
@@ -43,16 +42,15 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
 
     final vehicleLike = {
       'id': (state.id == 0) ? null : state.id,
-      'name': state.name,
+      'name': state.name.value,
       'manufacturer': state.manufacturer,
       'model': state.model,
-      'fuel': state.fuel,
+      'fuel': state.fuel.value,
       'type': state.type,
       'color': state.color,
-      'mileage': state.mileage,
-      'vId': state.vId,
+      'mileage': state.mileage.value,
       'plate': state.plate.value,
-      'owner': state.owner.value,
+      'customerId': state.customerId.value,
     };
 
     try {
@@ -64,10 +62,103 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
 
   void _touchedEveryField() {
     state = state.copyWith(
-        isValidForm: Formz.validate([
-      Plate.dirty(state.plate.value),
-      Select.dirty(state.owner.value),
-    ]));
+      isValidForm: Formz.validate(
+        [
+          Plate.dirty(state.plate.value),
+          Select.dirty(state.customerId.value),
+          Fuel.dirty(state.fuel.value),
+          Mileage.dirty(state.mileage.value),
+          VehicleName.dirty(state.name.value),
+          Select.dirty(state.customerId.value),
+        ],
+      ),
+    );
+  }
+
+  void onNameChanged(String value) {
+    state = state.copyWith(
+      name: VehicleName.dirty(value),
+      isValidForm: Formz.validate([
+        Plate.dirty(state.plate.value),
+        Select.dirty(state.customerId.value),
+        Fuel.dirty(state.fuel.value),
+        Mileage.dirty(state.mileage.value),
+        VehicleName.dirty(value),
+        Select.dirty(state.customerId.value),
+      ]),
+    );
+  }
+
+  void onFuelChanged(String value) {
+    state = state.copyWith(
+      fuel: Fuel.dirty(value),
+      isValidForm: Formz.validate([
+        Plate.dirty(state.plate.value),
+        Select.dirty(state.customerId.value),
+        Fuel.dirty(value),
+        Mileage.dirty(state.mileage.value),
+        VehicleName.dirty(state.name.value),
+        Select.dirty(state.customerId.value),
+      ]),
+    );
+  }
+
+  void onMileageChanged(int value) {
+    state = state.copyWith(
+      mileage: Mileage.dirty(value),
+      isValidForm: Formz.validate([
+        Plate.dirty(state.plate.value),
+        Select.dirty(state.customerId.value),
+        Fuel.dirty(state.fuel.value),
+        Mileage.dirty(value),
+        VehicleName.dirty(state.name.value),
+        Select.dirty(state.customerId.value),
+      ]),
+    );
+  }
+
+  void onPlateChanged(String value) {
+    state = state.copyWith(
+      plate: Plate.dirty(value),
+      isValidForm: Formz.validate([
+        Plate.dirty(value),
+        Select.dirty(state.customerId.value),
+        Fuel.dirty(state.fuel.value),
+        Mileage.dirty(state.mileage.value),
+        VehicleName.dirty(state.name.value),
+        Select.dirty(state.customerId.value),
+      ]),
+    );
+  }
+
+  void onOwnerChanged(int value) {
+    state = state.copyWith(
+      customerId: Select.dirty(value),
+      isValidForm: Formz.validate([
+        Plate.dirty(state.plate.value),
+        Select.dirty(state.customerId.value),
+        Fuel.dirty(state.fuel.value),
+        Mileage.dirty(state.mileage.value),
+        VehicleName.dirty(state.name.value),
+        Select.dirty(value),
+      ]),
+    );
+  }
+
+  void onManufacturerChanged(String value) {
+    state = state.copyWith(manufacturer: value);
+  }
+
+  void onModelChanged(String value) {
+    state = state.copyWith(model: value);
+  }
+
+  void onColorChanged(String value) {
+    state = state.copyWith(color: value);
+  }
+
+  void onTypeChanged(String value) {
+    state = state.copyWith(type: value);
   }
 }
 
@@ -75,32 +166,30 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
 class VehicleFormState {
   final bool isValidForm;
   final int? id;
-  final String name;
+  final VehicleName name;
   final String manufacturer;
   final String model;
-  final String fuel;
+  final Fuel fuel;
   final String type;
   final String color;
-  final int mileage;
-  final String vId;
+  final Mileage mileage;
   final Plate plate;
-  final Select owner;
+  final Select customerId;
   final String? createdAt;
   final String? updatedAt;
 
   VehicleFormState({
     this.isValidForm = false,
     this.id,
-    this.name = '',
+    this.name = const VehicleName.dirty(''),
     this.manufacturer = '',
     this.model = '',
-    this.fuel = '',
+    this.fuel = const Fuel.dirty(''),
     this.type = '',
     this.color = '',
-    this.mileage = 0,
-    this.vId = '',
+    this.mileage = const Mileage.dirty(0),
     this.plate = const Plate.dirty(''),
-    this.owner = const Select.dirty(0),
+    this.customerId = const Select.dirty(0),
     this.createdAt,
     this.updatedAt,
   });
@@ -108,16 +197,15 @@ class VehicleFormState {
   VehicleFormState copyWith({
     bool? isValidForm,
     int? id,
-    String? name,
+    VehicleName? name,
     String? manufacturer,
     String? model,
-    String? fuel,
+    Fuel? fuel,
     String? type,
     String? color,
-    int? mileage,
-    String? vId,
+    Mileage? mileage,
     Plate? plate,
-    Select? owner,
+    Select? customerId,
   }) =>
       VehicleFormState(
         isValidForm: isValidForm ?? this.isValidForm,
@@ -129,8 +217,7 @@ class VehicleFormState {
         type: type ?? this.type,
         color: color ?? this.color,
         mileage: mileage ?? this.mileage,
-        vId: vId ?? this.vId,
         plate: plate ?? this.plate,
-        owner: owner ?? this.owner,
+        customerId: customerId ?? this.customerId,
       );
 }

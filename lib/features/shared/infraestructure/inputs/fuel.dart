@@ -24,7 +24,8 @@ class Fuel extends FormzInput<String, FuelError> {
       return FuelError.empty;
     }
 
-    if (!fuelValues.contains(value)) return FuelError.type;
+    if (!fuelValues.contains(value.toLowerCase())) return FuelError.type;
+    if (!fuelValues.contains(value.toLowerCase().trim())) return FuelError.type;
 
     return null;
   }

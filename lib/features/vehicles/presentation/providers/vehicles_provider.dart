@@ -43,6 +43,25 @@ class VehiclesNotifier extends StateNotifier<VehiclesState> {
     }
   }
 
+  Future<bool> deleteVehicle(int id) async {
+    try {
+      final vehicle = await vehiclesRepository.deleteVehicle(id);
+      final isPersonInList = state.vehicles
+          .any((element) => element.id == int.parse(vehicle['id']));
+
+      if (isPersonInList) {
+        state.vehicles
+            .removeWhere((element) => element.id == int.parse(vehicle['id']));
+        state = state.copyWith(vehicles: List<Vehicle>.from(state.vehicles));
+        return true;
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future loadNextPage() async {
     if (state.isLoading || state.isLastPage) return;
 
