@@ -10,7 +10,7 @@ class People {
   String? password;
   String photo;
   String status;
-  int userId;
+  int roleId;
   String role;
   String? createdAt;
   String? updatedAt;
@@ -24,7 +24,7 @@ class People {
     required this.email,
     required this.photo,
     required this.status,
-    required this.userId,
+    required this.roleId,
     required this.role,
     this.createdAt,
     this.updatedAt,

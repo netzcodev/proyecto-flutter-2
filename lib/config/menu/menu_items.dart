@@ -40,18 +40,6 @@ const globalMenuItems = <MenuItem>[
     icon: Icons.accessibility_new_outlined,
   ),
   MenuItem(
-    title: 'Permissions',
-    subTitle: 'Manage Permissions',
-    link: '/permissions',
-    icon: Icons.lock_person_outlined,
-  ),
-  MenuItem(
-    title: 'Roles',
-    subTitle: 'Manage Roles',
-    link: '/roles',
-    icon: Icons.admin_panel_settings_outlined,
-  ),
-  MenuItem(
     title: 'Schedules',
     subTitle: 'Manage Schedules',
     link: '/schedules',
@@ -62,12 +50,6 @@ const globalMenuItems = <MenuItem>[
     subTitle: 'Manage Services',
     link: '/services',
     icon: Icons.room_service_outlined,
-  ),
-  MenuItem(
-    title: 'Users',
-    subTitle: 'Manage users',
-    link: '/users',
-    icon: Icons.supervised_user_circle_outlined,
   ),
   MenuItem(
     title: 'Vehicles',

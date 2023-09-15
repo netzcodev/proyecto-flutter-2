@@ -5,4 +5,5 @@ abstract class PeopleRepository {
   Future<People> getPeopleById(int id);
   Future<People> getPeopleByDocument(int doc);
   Future<People> createUpdatePeople(Map<String, dynamic> peopleLike);
+  Future<Map<String, dynamic>> deletePeople(int id);
 }

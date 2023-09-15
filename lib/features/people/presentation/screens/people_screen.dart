@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/people/domain/domain.dart';
 import 'package:cars_app/features/people/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
@@ -18,7 +19,10 @@ class PeopleScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Personas'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.tips_and_updates_outlined)),
         ],
       ),
       body: const _PeopleView(),
@@ -61,9 +65,16 @@ class _PeopleViewState extends ConsumerState {
     super.dispose();
   }
 
+  void showSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Persona Eliminada')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final peopleState = ref.watch(peopleProvider);
+    final authState = ref.read(authProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -79,7 +90,20 @@ class _PeopleViewState extends ConsumerState {
           return GestureDetector(
             child: CrudCard<People>(
               entity: person,
-              icon: const Icon(Icons.person_outline),
+              role: authState.user!.role,
+              icon: Icons.person_outline,
+              options: authState.user!.menu!
+                  .firstWhere((element) => element.menuName == 'People'),
+              onDeleteCallback: (value) {
+                ref.watch(peopleProvider.notifier).deletePeople(value!).then(
+                  (value) {
+                    print(value);
+                    if (!value) return;
+                    showSnackbar(context);
+                    // context.push('/people');
+                  },
+                );
+              },
             ),
             onTap: () => context.push('/people/${person.id}'),
           );

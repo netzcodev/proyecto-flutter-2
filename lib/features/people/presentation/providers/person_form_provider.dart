@@ -4,7 +4,7 @@ import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 
-const userIdMap = {'admin': 1, 'cliente': 2, 'empleado': 3};
+const userIdMap = {'admin': 1, 'cliente': 2, 'empleado': 3, 'gerente': 4};
 
 final personFormProvider = StateNotifierProvider.autoDispose
     .family<PersonFormNotifier, PersonFormState, People>((ref, person) {
@@ -54,7 +54,7 @@ class PersonFormNotifier extends StateNotifier<PersonFormState> {
       'email': state.email.value,
       'photo': state.photo,
       'status': state.status,
-      'userId': userIdMap[state.role],
+      'roleId': userIdMap[state.role],
     };
 
     try {
@@ -121,9 +121,14 @@ class PersonFormNotifier extends StateNotifier<PersonFormState> {
   void onRoleChanged(String value) {
     state = state.copyWith(role: value);
   }
+
+  void disableAllFields() {
+    state = state.copyWith(disableAll: true);
+  }
 }
 
 class PersonFormState {
+  final bool disableAll;
   final bool isValidForm;
   final int? id;
   final Document document;
@@ -134,18 +139,21 @@ class PersonFormState {
   final String role;
   final Name fullName;
 
-  PersonFormState(
-      {this.isValidForm = false,
-      this.id,
-      this.document = const Document.dirty(0),
-      this.phone = '',
-      this.email = const Email.dirty(''),
-      this.photo = '',
-      this.status = 'A',
-      this.role = '',
-      this.fullName = const Name.dirty('')});
+  PersonFormState({
+    this.disableAll = false,
+    this.isValidForm = false,
+    this.id,
+    this.document = const Document.dirty(0),
+    this.phone = '',
+    this.email = const Email.dirty(''),
+    this.photo = '',
+    this.status = 'A',
+    this.role = '',
+    this.fullName = const Name.dirty(''),
+  });
 
   PersonFormState copyWith({
+    bool? disableAll,
     bool? isValidForm,
     int? id,
     Document? document,
@@ -159,6 +167,7 @@ class PersonFormState {
     Name? fullName,
   }) =>
       PersonFormState(
+        disableAll: disableAll ?? this.disableAll,
         isValidForm: isValidForm ?? this.isValidForm,
         id: id ?? this.id,
         document: document ?? this.document,

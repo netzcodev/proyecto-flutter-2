@@ -1,6 +1,6 @@
+import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/auth/domain/domain.dart';
 import 'package:cars_app/features/auth/infraestructure/infraestructure.dart';
-import 'package:cars_app/features/permissions/domain/domain.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:cars_app/features/users/users.dart';
@@ -65,8 +65,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
       user.token,
     );
 
+    List<MenuItem> appMenuItems = [];
+
+    for (MenuItem item in globalMenuItems) {
+      for (var element in user.menu!) {
+        if (element.menuName?.toLowerCase() == item.title.toLowerCase()) {
+          appMenuItems.add(item);
+        }
+      }
+    }
+
     state = state.copyWith(
       user: user,
+      menus: appMenuItems,
       errorMessage: '',
       authStatus: AuthStatus.authenticated,
     );
@@ -78,6 +89,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(
       authStatus: AuthStatus.notAuthenticated,
       user: null,
+      menus: [],
       errorMessage: error,
     );
   }
@@ -86,22 +98,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
 class AuthState {
   final AuthStatus authStatus;
   final User? user;
+  final List<MenuItem>? menus;
   final String errorMessage;
 
   AuthState({
     this.authStatus = AuthStatus.chenking,
     this.user,
+    this.menus,
     this.errorMessage = '',
   });
 
   AuthState copyWith({
     AuthStatus? authStatus,
     User? user,
+    List<MenuItem>? menus,
     String? errorMessage,
   }) =>
       AuthState(
         authStatus: authStatus ?? this.authStatus,
         user: user ?? this.user,
+        menus: menus ?? this.menus,
         errorMessage: errorMessage ?? this.errorMessage,
       );
 }

@@ -74,4 +74,18 @@ class PeopleDatasourceImpl extends PeopleDatasource {
 
     return people;
   }
+
+  @override
+  Future<Map<String, dynamic>> deletePeople(int id) async {
+    try {
+      final response = await dio.delete('/people/$id');
+      final deletedPerson = response.data;
+      return deletedPerson;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 404) throw PersonNotFound();
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
+  }
 }

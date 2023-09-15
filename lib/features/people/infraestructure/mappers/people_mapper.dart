@@ -10,7 +10,7 @@ class PeopleMapper {
         email: json['email'],
         photo: json['photo'] ?? '',
         status: json['status'],
-        userId: json['userId'],
+        roleId: json['roleId'],
         role: json['role'],
         createdAt: json['createdAt'],
         updatedAt: json['updatedAt'],

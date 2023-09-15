@@ -1,4 +1,9 @@
-export 'email.dart';
-export 'password.dart';
-export 'name.dart';
 export 'document.dart';
+export 'email.dart';
+export 'fuel.dart';
+export 'mileage.dart';
+export 'name.dart';
+export 'password.dart';
+export 'plate.dart';
+export 'select.dart';
+export 'vehicle_name.dart';

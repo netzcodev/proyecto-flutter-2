@@ -1,7 +1,9 @@
+import 'package:cars_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class PersonScreen extends ConsumerWidget {
   final int peopleId;
@@ -19,6 +21,11 @@ class PersonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final personState = ref.watch(personProvider(peopleId));
+    final permissions = ref
+        .watch(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'People');
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -38,13 +45,17 @@ class PersonScreen extends ConsumerWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (personState.people == null) return;
+            if (permissions.modify == 0) return;
             ref
                 .read(personFormProvider(personState.people!).notifier)
                 .onFormSubmit()
-                .then((value) {
-              if (!value) return;
-              showSnackbar(context);
-            });
+                .then(
+              (value) {
+                if (!value) return;
+                showSnackbar(context);
+                context.push('/people');
+              },
+            );
           },
           child: const Icon(Icons.save_outlined),
         ),
@@ -88,6 +99,12 @@ class _PersonInformation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final personForm = ref.watch(personFormProvider(person));
+    final authState = ref.watch(authProvider);
+    final permissions = ref
+        .watch(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'People');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -96,13 +113,16 @@ class _PersonInformation extends ConsumerWidget {
         children: [
           const Text('Datos:'),
           const SizedBox(height: 15),
-          _RoleSelector(
-            selected: personForm.role,
-            onRoleChanged:
-                ref.read(personFormProvider(person).notifier).onRoleChanged,
-          ),
+          if (authState.user!.isAdmin)
+            _RoleSelector(
+              enabled: permissions.modify == 1 ? true : false,
+              selected: personForm.role,
+              onRoleChanged:
+                  ref.read(personFormProvider(person).notifier).onRoleChanged,
+            ),
           const SizedBox(height: 15),
           CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             isTopField: true,
             label: 'Nombre',
             initialValue: personForm.fullName.value,
@@ -111,6 +131,7 @@ class _PersonInformation extends ConsumerWidget {
             errorMessage: personForm.fullName.errorMessage,
           ),
           CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Documento',
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
             initialValue: personForm.document.value == 0
@@ -122,6 +143,7 @@ class _PersonInformation extends ConsumerWidget {
             errorMessage: personForm.document.errorMessage,
           ),
           CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             label: 'Email',
             initialValue: personForm.email.value,
             onChanged:
@@ -129,6 +151,7 @@ class _PersonInformation extends ConsumerWidget {
             errorMessage: personForm.email.errorMessage,
           ),
           CustomFormField(
+            enabled: permissions.modify == 1 ? true : false,
             isBottomField: true,
             label: 'Teléfono',
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
@@ -137,11 +160,12 @@ class _PersonInformation extends ConsumerWidget {
                 ref.read(personFormProvider(person).notifier).onPhoneChanged,
           ),
           const SizedBox(height: 15),
-          _StatusSelector(
-            status: personForm.status,
-            onStatusChanged:
-                ref.read(personFormProvider(person).notifier).onStatusChanged,
-          ),
+          if (authState.user!.isAdmin)
+            _StatusSelector(
+              status: personForm.status,
+              onStatusChanged:
+                  ref.read(personFormProvider(person).notifier).onStatusChanged,
+            ),
         ],
       ),
     );
@@ -150,11 +174,13 @@ class _PersonInformation extends ConsumerWidget {
 
 class _RoleSelector extends StatelessWidget {
   final String selected;
-  final List<String> roles = const ['admin', 'cliente', 'empleado'];
+  final bool enabled;
+  final List<String> roles = const ['admin', 'cliente', 'empleado', 'gerente'];
   final List<IconData> rolesIcons = const [
     Icons.admin_panel_settings_outlined,
     Icons.money_outlined,
     Icons.workspace_premium_outlined,
+    Icons.manage_accounts_outlined,
   ];
 
   final void Function(String selected) onRoleChanged;
@@ -162,6 +188,7 @@ class _RoleSelector extends StatelessWidget {
   const _RoleSelector({
     required this.selected,
     required this.onRoleChanged,
+    required this.enabled,
   });
 
   @override
@@ -172,7 +199,7 @@ class _RoleSelector extends StatelessWidget {
         showSelectedIcon: false,
         segments: roles.map((role) {
           return ButtonSegment(
-            icon: Icon(rolesIcons[roles.indexOf(role)]),
+            enabled: enabled,
             value: role,
             label: Text(
               role,

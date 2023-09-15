@@ -10,7 +10,6 @@ import 'package:cars_app/features/permissions/permissions.dart';
 import 'package:cars_app/features/roles/reoles.dart';
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/services.dart';
-import 'package:cars_app/features/users/users.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,12 +69,14 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => const ServicesScreen(),
       ),
       GoRoute(
-        path: '/users',
-        builder: (context, state) => const UsersScreen(),
-      ),
-      GoRoute(
         path: '/vehicles',
         builder: (context, state) => const VehiclesScreen(),
+      ),
+      GoRoute(
+        path: '/vehicles/:id',
+        builder: (context, state) => VehicleScreen(
+          vechicleId: int.parse(state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/calendar',

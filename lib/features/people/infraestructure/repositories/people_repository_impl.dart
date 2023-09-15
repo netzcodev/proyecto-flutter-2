@@ -24,4 +24,9 @@ class PeopleRepositoryImpl extends PeopleRepository {
   Future<List<People>> getPeopleByPage({int limit = 10, int offset = 0}) {
     return datasource.getPeopleByPage(limit: limit, offset: offset);
   }
+
+  @override
+  Future<Map<String, dynamic>> deletePeople(int id) {
+    return datasource.deletePeople(id);
+  }
 }

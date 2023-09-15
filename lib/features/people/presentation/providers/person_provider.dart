@@ -30,7 +30,7 @@ class PersonNotifier extends StateNotifier<PersonState> {
       email: '',
       photo: '',
       status: 'A',
-      userId: 2,
+      roleId: 2,
       role: 'cliente',
     );
   }

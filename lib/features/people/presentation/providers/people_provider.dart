@@ -39,6 +39,25 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
     }
   }
 
+  Future<bool> deletePeople(int id) async {
+    try {
+      final person = await peopleRepository.deletePeople(id);
+      final isPersonInList =
+          state.people.any((element) => element.id == int.parse(person['id']));
+
+      if (isPersonInList) {
+        state.people
+            .removeWhere((element) => element.id == int.parse(person['id']));
+        state = state.copyWith(people: List<People>.from(state.people));
+        return true;
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future loadNextPage() async {
     if (state.isLoading || state.isLastPage) return;
 

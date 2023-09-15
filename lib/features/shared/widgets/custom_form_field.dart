@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class CustomFormField extends StatelessWidget {
   final bool isTopField; // La idea es que tenga bordes redondeados arriba
-  final bool isBottomField; // La idea es que tenga bordes redondeados abajo
+  final bool isBottomField;
+  final bool enabled; // La idea es que tenga bordes redondeados abajo
   final String? label;
   final String? hint;
   final String? errorMessage;
@@ -18,6 +19,7 @@ class CustomFormField extends StatelessWidget {
     super.key,
     this.isTopField = false,
     this.isBottomField = false,
+    this.enabled = true,
     this.label,
     this.hint,
     this.errorMessage,
@@ -58,15 +60,19 @@ class CustomFormField extends StatelessWidget {
                   offset: const Offset(0, 3))
           ]),
       child: TextFormField(
+        enabled: enabled,
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
         validator: validator,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: const TextStyle(fontSize: 15, color: Colors.black54),
+        style: TextStyle(
+            fontSize: 15,
+            color: enabled ? Colors.black54 : Colors.grey.shade400),
         maxLines: maxLines,
         initialValue: initialValue,
         decoration: InputDecoration(
+          disabledBorder: border,
           floatingLabelBehavior: maxLines > 1
               ? FloatingLabelBehavior.always
               : FloatingLabelBehavior.auto,
