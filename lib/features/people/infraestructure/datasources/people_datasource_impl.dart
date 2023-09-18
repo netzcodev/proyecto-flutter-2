@@ -88,4 +88,32 @@ class PeopleDatasourceImpl extends PeopleDatasource {
       throw Exception();
     }
   }
+
+  @override
+  Future<List<People>> getCustomersByPage(
+      {int limit = 10, int offset = 0}) async {
+    final url = '/customers?limit=$limit&offset=$offset';
+    final response = await dio.get<List>(url);
+    final List<People> people = [];
+
+    for (var person in response.data ?? []) {
+      people.add(PeopleMapper.jsonToEntity(person));
+    }
+
+    return people;
+  }
+
+  @override
+  Future<List<People>> getEmployeesByPage(
+      {int limit = 10, int offset = 0}) async {
+    final url = '/employees?limit=$limit&offset=$offset';
+    final response = await dio.get<List>(url);
+    final List<People> people = [];
+
+    for (var person in response.data ?? []) {
+      people.add(PeopleMapper.jsonToEntity(person));
+    }
+
+    return people;
+  }
 }

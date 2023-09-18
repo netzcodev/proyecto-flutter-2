@@ -64,6 +64,58 @@ class PersonFormNotifier extends StateNotifier<PersonFormState> {
     }
   }
 
+  Future<bool> onEmployeeFormSubmit() async {
+    _touchedEveryField();
+
+    if (!state.isValidForm) return false;
+    if (onSubmitCallBack == null) return false;
+
+    final fullNameList = state.fullName.value.split(' ');
+    final personLike = {
+      'id': (state.id == 0) ? null : state.id,
+      'document': state.document.value,
+      'name': fullNameList[0],
+      'lastName': fullNameList[1],
+      'phone': state.phone,
+      'email': state.email.value,
+      'photo': state.photo,
+      'status': state.status,
+      'roleId': 3,
+    };
+
+    try {
+      return await onSubmitCallBack!(personLike);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> onCustomerFormSubmit() async {
+    _touchedEveryField();
+
+    if (!state.isValidForm) return false;
+    if (onSubmitCallBack == null) return false;
+
+    final fullNameList = state.fullName.value.split(' ');
+    final personLike = {
+      'id': (state.id == 0) ? null : state.id,
+      'document': state.document.value,
+      'name': fullNameList[0],
+      'lastName': fullNameList[1],
+      'phone': state.phone,
+      'email': state.email.value,
+      'photo': state.photo,
+      'status': state.status,
+      'roleId': 2,
+    };
+
+    try {
+      return await onSubmitCallBack!(personLike);
+    } catch (e) {
+      return false;
+    }
+  }
+
   void _touchedEveryField() {
     state = state.copyWith(
         isValidForm: Formz.validate([

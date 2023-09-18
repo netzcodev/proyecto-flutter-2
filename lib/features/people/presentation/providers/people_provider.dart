@@ -85,6 +85,62 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
       people: [...state.people, ...people],
     );
   }
+
+  Future loadNextEmployeesPage() async {
+    if (state.isLoading || state.isLastPage) return;
+
+    state = state.copyWith(
+      isLoading: true,
+    );
+
+    final people = await peopleRepository.getEmployeesByPage(
+      limit: state.limit,
+      offset: state.offset,
+    );
+
+    if (people.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        isLastPage: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      isLastPage: false,
+      isLoading: false,
+      offset: state.offset + 10,
+      people: [...state.people, ...people],
+    );
+  }
+
+  Future loadNextCustomersPage() async {
+    if (state.isLoading || state.isLastPage) return;
+
+    state = state.copyWith(
+      isLoading: true,
+    );
+
+    final people = await peopleRepository.getCustomersByPage(
+      limit: state.limit,
+      offset: state.offset,
+    );
+
+    if (people.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        isLastPage: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      isLastPage: false,
+      isLoading: false,
+      offset: state.offset + 10,
+      people: [...state.people, ...people],
+    );
+  }
 }
 
 class PeopleState {

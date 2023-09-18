@@ -1,11 +1,11 @@
-import 'package:cars_app/features/customers/customers.dart';
+import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final vehiclesProvider =
     StateNotifierProvider<VehiclesNotifier, VehiclesState>((ref) {
   final vehiclesRepository = ref.watch(vehicleRepositoryProvider);
-  ref.watch(customersProvider.notifier).loadNextPage();
+  ref.watch(peopleProvider.notifier).loadNextPage();
   return VehiclesNotifier(vehiclesRepository: vehiclesRepository);
 });
 

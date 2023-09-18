@@ -1,4 +1,3 @@
-export 'package:cars_app/features/customers/presentation/screens/customers_screen.dart';
-export 'domain/domain.dart';
-export 'infraestructure/infraestructure.dart';
-export 'presentation/presentation.dart';
+export 'presentation/providers/providers.dart';
+export 'presentation/screens/customer_screen.dart';
+export 'presentation/screens/customers_screen.dart';

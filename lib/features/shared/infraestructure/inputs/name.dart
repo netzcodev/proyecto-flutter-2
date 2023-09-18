@@ -4,7 +4,7 @@ enum NameError { empty, format }
 
 class Name extends FormzInput<String, NameError> {
   static final RegExp nameRegExp = RegExp(
-    r'^[a-zA-Z]+\s[a-zA-Z]+$',
+    r'^[a-zA-ZáéíóúÁÉÍÓÚ]+\s[a-zA-ZáéíóúÁÉÍÓÚ]+$',
   );
 
   const Name.pure() : super.pure('');

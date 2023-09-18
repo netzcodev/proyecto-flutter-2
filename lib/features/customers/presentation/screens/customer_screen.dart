@@ -5,9 +5,9 @@ import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EmployeeScreen extends ConsumerWidget {
+class CustomerScreen extends ConsumerWidget {
   final int peopleId;
-  const EmployeeScreen({
+  const CustomerScreen({
     super.key,
     required this.peopleId,
   });
@@ -15,7 +15,7 @@ class EmployeeScreen extends ConsumerWidget {
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Mecánico Actualizado')));
+        .showSnackBar(const SnackBar(content: Text('Cliente Actualizado')));
   }
 
   @override
@@ -25,13 +25,13 @@ class EmployeeScreen extends ConsumerWidget {
         .read(authProvider)
         .user!
         .menu!
-        .firstWhere((element) => element.menuName == 'Employees');
+        .firstWhere((element) => element.menuName == 'Customers');
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Editar Mecánico'),
+          title: const Text('Editar Cliente'),
           actions: [
             IconButton(
               onPressed: () {},
@@ -41,19 +41,19 @@ class EmployeeScreen extends ConsumerWidget {
         ),
         body: personState.isLoading
             ? const FullScreenLoader()
-            : _EmployeeView(person: personState.people!),
+            : _CustomerView(person: personState.people!),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (personState.people == null) return;
             if (permissions.modify == 0) return;
             ref
                 .read(personFormProvider(personState.people!).notifier)
-                .onEmployeeFormSubmit()
+                .onCustomerFormSubmit()
                 .then(
               (value) {
                 if (!value) return;
                 showSnackbar(context);
-                ref.read(goRouterProvider).go('/employees');
+                ref.read(goRouterProvider).go('/customers');
               },
             );
           },
@@ -64,10 +64,10 @@ class EmployeeScreen extends ConsumerWidget {
   }
 }
 
-class _EmployeeView extends ConsumerWidget {
+class _CustomerView extends ConsumerWidget {
   final People person;
 
-  const _EmployeeView({required this.person});
+  const _CustomerView({required this.person});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -86,15 +86,15 @@ class _EmployeeView extends ConsumerWidget {
             child:
                 Text(personForm.fullName.value, style: textStyles.titleSmall)),
         const SizedBox(height: 10),
-        _EmployeeInformation(person: person),
+        _CustomerInformation(person: person),
       ],
     );
   }
 }
 
-class _EmployeeInformation extends ConsumerWidget {
+class _CustomerInformation extends ConsumerWidget {
   final People person;
-  const _EmployeeInformation({required this.person});
+  const _CustomerInformation({required this.person});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,7 +104,7 @@ class _EmployeeInformation extends ConsumerWidget {
         .watch(authProvider)
         .user!
         .menu!
-        .firstWhere((element) => element.menuName == 'Employees');
+        .firstWhere((element) => element.menuName == 'Customers');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),

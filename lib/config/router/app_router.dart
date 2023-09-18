@@ -37,8 +37,20 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => const CustomersScreen(),
       ),
       GoRoute(
+        path: '/customers/:id',
+        builder: (context, state) => CustomerScreen(
+          peopleId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
         path: '/employees',
         builder: (context, state) => const EmployeesScreen(),
+      ),
+      GoRoute(
+        path: '/employees/:id',
+        builder: (context, state) => EmployeeScreen(
+          peopleId: int.parse(state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/people',
