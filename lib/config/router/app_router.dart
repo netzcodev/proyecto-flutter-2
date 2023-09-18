@@ -6,8 +6,6 @@ import 'package:cars_app/features/customers/customers.dart';
 import 'package:cars_app/features/dashboard/dashboard.dart';
 import 'package:cars_app/features/employees/employees.dart';
 import 'package:cars_app/features/people/people.dart';
-import 'package:cars_app/features/permissions/permissions.dart';
-import 'package:cars_app/features/roles/reoles.dart';
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/services.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
@@ -51,14 +49,6 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => PersonScreen(
           peopleId: int.parse(state.pathParameters['id']!),
         ),
-      ),
-      GoRoute(
-        path: '/permissions',
-        builder: (context, state) => const PermissionsScreen(),
-      ),
-      GoRoute(
-        path: '/roles',
-        builder: (context, state) => const RolesScreen(),
       ),
       GoRoute(
         path: '/schedules',

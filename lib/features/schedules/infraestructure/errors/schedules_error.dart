@@ -1,0 +1,1 @@
+class ScheduleNotFound implements Exception {}

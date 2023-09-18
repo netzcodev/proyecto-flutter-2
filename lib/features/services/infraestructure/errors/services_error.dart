@@ -1,0 +1,1 @@
+class ServiceNotFound implements Exception {}

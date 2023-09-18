@@ -1,0 +1,1 @@
+class EmployeeNotFound implements Exception {}

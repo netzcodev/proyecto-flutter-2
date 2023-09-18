@@ -4,7 +4,6 @@ import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class PersonScreen extends ConsumerWidget {
   final int peopleId;
