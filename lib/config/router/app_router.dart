@@ -12,109 +12,111 @@ import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final goRouterProvider = Provider((ref) {
-  final goRouterNotifier = ref.read(goRouterNotifierProvider);
+final goRouterProvider = Provider(
+  (ref) {
+    final goRouterNotifier = ref.read(goRouterNotifierProvider);
 
-  return GoRouter(
-    initialLocation: '/splash',
-    refreshListenable: goRouterNotifier,
-    routes: [
-      //* Primera Pantalla
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const CheckAuthStatusScreen(),
-      ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const DashboardScreen(),
-      ),
-      GoRoute(
-        path: '/dashboard',
-        builder: (context, state) => const DashboardScreen(),
-      ),
-      GoRoute(
-        path: '/customers',
-        builder: (context, state) => const CustomersScreen(),
-      ),
-      GoRoute(
-        path: '/customers/:id',
-        builder: (context, state) => CustomerScreen(
-          peopleId: int.parse(state.pathParameters['id']!),
+    return GoRouter(
+      initialLocation: '/splash',
+      refreshListenable: goRouterNotifier,
+      routes: [
+        //* Primera Pantalla
+        GoRoute(
+          path: '/splash',
+          builder: (context, state) => const CheckAuthStatusScreen(),
         ),
-      ),
-      GoRoute(
-        path: '/employees',
-        builder: (context, state) => const EmployeesScreen(),
-      ),
-      GoRoute(
-        path: '/employees/:id',
-        builder: (context, state) => EmployeeScreen(
-          peopleId: int.parse(state.pathParameters['id']!),
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const CalendarScreen(),
         ),
-      ),
-      GoRoute(
-        path: '/people',
-        builder: (context, state) => const PeopleScreen(),
-      ),
-      GoRoute(
-        path: '/people/:id',
-        builder: (context, state) => PersonScreen(
-          peopleId: int.parse(state.pathParameters['id']!),
+        GoRoute(
+          path: '/dashboard',
+          builder: (context, state) => const DashboardScreen(),
         ),
-      ),
-      GoRoute(
-        path: '/schedules',
-        builder: (context, state) => const SchedulesScreen(),
-      ),
-      GoRoute(
-        path: '/services',
-        builder: (context, state) => const ServicesScreen(),
-      ),
-      GoRoute(
-        path: '/vehicles',
-        builder: (context, state) => const VehiclesScreen(),
-      ),
-      GoRoute(
-        path: '/vehicles/:id',
-        builder: (context, state) => VehicleScreen(
-          vechicleId: int.parse(state.pathParameters['id']!),
+        GoRoute(
+          path: '/customers',
+          builder: (context, state) => const CustomersScreen(),
         ),
-      ),
-      GoRoute(
-        path: '/calendar',
-        builder: (context, state) => const CalendarScreen(),
-      ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterScreen(),
-      ),
-    ],
-    redirect: (context, state) {
-      final isGoingTo = state.matchedLocation;
-      final authStatus = goRouterNotifier.authStatus;
+        GoRoute(
+          path: '/customers/:id',
+          builder: (context, state) => CustomerScreen(
+            peopleId: int.parse(state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/employees',
+          builder: (context, state) => const EmployeesScreen(),
+        ),
+        GoRoute(
+          path: '/employees/:id',
+          builder: (context, state) => EmployeeScreen(
+            peopleId: int.parse(state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/people',
+          builder: (context, state) => const PeopleScreen(),
+        ),
+        GoRoute(
+          path: '/people/:id',
+          builder: (context, state) => PersonScreen(
+            peopleId: int.parse(state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/schedules',
+          builder: (context, state) => const SchedulesScreen(),
+        ),
+        GoRoute(
+          path: '/services',
+          builder: (context, state) => const ServicesScreen(),
+        ),
+        GoRoute(
+          path: '/vehicles',
+          builder: (context, state) => const VehiclesScreen(),
+        ),
+        GoRoute(
+          path: '/vehicles/:id',
+          builder: (context, state) => VehicleScreen(
+            vechicleId: int.parse(state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/calendar',
+          builder: (context, state) => const CalendarScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          builder: (context, state) => const RegisterScreen(),
+        ),
+      ],
+      redirect: (context, state) {
+        final isGoingTo = state.matchedLocation;
+        final authStatus = goRouterNotifier.authStatus;
 
-      if (isGoingTo == "/splash" && authStatus == AuthStatus.chenking) {
-        return null;
-      }
-
-      if (authStatus == AuthStatus.notAuthenticated) {
-        if (isGoingTo == '/login' || isGoingTo == '/register') return null;
-        return '/login';
-      }
-
-      if (authStatus == AuthStatus.authenticated) {
-        if (isGoingTo == '/login' ||
-            isGoingTo == '/register' ||
-            isGoingTo == '/splash') {
-          return '/';
+        if (isGoingTo == "/splash" && authStatus == AuthStatus.chenking) {
+          return null;
         }
-      }
 
-      return null;
-    },
-  );
-});
+        if (authStatus == AuthStatus.notAuthenticated) {
+          if (isGoingTo == '/login' || isGoingTo == '/register') return null;
+          return '/login';
+        }
+
+        if (authStatus == AuthStatus.authenticated) {
+          if (isGoingTo == '/login' ||
+              isGoingTo == '/register' ||
+              isGoingTo == '/splash') {
+            return '/';
+          }
+        }
+
+        return null;
+      },
+    );
+  },
+);

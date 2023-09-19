@@ -31,7 +31,7 @@ const globalMenuItems = <MenuItem>[
     title: 'Employees',
     subTitle: 'Manage Employees',
     link: '/employees',
-    icon: Icons.business_center_outlined,
+    icon: Icons.build_outlined,
   ),
   MenuItem(
     title: 'People',

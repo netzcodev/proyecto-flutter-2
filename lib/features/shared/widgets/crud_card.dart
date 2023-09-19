@@ -66,6 +66,7 @@ class CrudCard<T> extends StatelessWidget {
               ),
               color: color,
             ),
+          if (options.remove == 0) const SizedBox(height: 50)
         ],
       ),
     );

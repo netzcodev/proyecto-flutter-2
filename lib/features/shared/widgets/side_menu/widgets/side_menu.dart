@@ -1,8 +1,9 @@
+import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
+import 'package:cars_app/features/shared/widgets/side_menu/providers/side_menu_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -14,24 +15,25 @@ class SideMenu extends ConsumerStatefulWidget {
 }
 
 class SideMenuState extends ConsumerState<SideMenu> {
-  int navDrawerIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
     final textStyles = Theme.of(context).textTheme;
     final loginState = ref.watch(authProvider);
+    final navDrawerIndex = ref.watch(sidemenuStateProvider.notifier);
+    final menuInitialIndex =
+        loginState.menus?.indexWhere((element) => element.title == 'Calendar');
 
     return NavigationDrawer(
       elevation: 1,
-      selectedIndex: navDrawerIndex,
+      selectedIndex: navDrawerIndex.getNavIndex() == 0
+          ? menuInitialIndex
+          : navDrawerIndex.getNavIndex(),
       onDestinationSelected: (value) {
-        setState(() {
-          navDrawerIndex = value;
-        });
+        navDrawerIndex.onDestinationSelected(value);
 
         final menuItem = loginState.menus![value];
-        context.push(menuItem.link);
+        ref.watch(goRouterProvider).go(menuItem.link);
         widget.scaffoldKey.currentState?.closeDrawer();
       },
       children: [
@@ -43,19 +45,17 @@ class SideMenuState extends ConsumerState<SideMenu> {
           padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
           child: Text(loginState.user!.fullName, style: textStyles.titleSmall),
         ),
-        ...loginState.menus!.map(
-          (item) => NavigationDrawerDestination(
-            icon: Icon(item.icon),
-            label: Text(item.title),
-          ),
-        ),
+        ...loginState.menus!
+            .map(
+              (item) => NavigationDrawerDestination(
+                icon: Icon(item.icon),
+                label: Text(item.title),
+              ),
+            )
+            .toList(),
         const Padding(
           padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
           child: Divider(),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 10, 16, 10),
-          child: Text('Otras opciones'),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -68,10 +68,5 @@ class SideMenuState extends ConsumerState<SideMenu> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
