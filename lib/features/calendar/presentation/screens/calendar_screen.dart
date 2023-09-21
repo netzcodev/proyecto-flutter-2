@@ -1,8 +1,8 @@
-import 'package:cars_app/features/calendar/domain/domail.dart';
-import 'package:cars_app/features/calendar/presentation/providers/calendar_provider.dart';
+import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -25,7 +25,9 @@ class CalendarScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('Cita'),
         icon: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          context.push('/schedules/0');
+        },
       ),
     );
   }
@@ -45,8 +47,8 @@ class _CalendarViewState extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final calendarState = ref.watch(calendarProvider);
-    final calendarNotifier = ref.watch(calendarProvider.notifier);
+    final calendarState = ref.watch(schedulesProvider);
+    final calendarNotifier = ref.watch(schedulesProvider.notifier);
 
     return Column(
       children: [
@@ -62,12 +64,16 @@ class _CalendarViewState extends ConsumerWidget {
                       calendarNotifier.onFocusedDayChange(DateTime.now()),
                   onClearButtonTap: () => calendarNotifier.resetState(),
                   onLeftArrowTap: () {
+                    calendarNotifier
+                        .onWeekNumberChange(calendarState.weekNumber - 1);
                     _pageController.previousPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeOut,
                     );
                   },
                   onRightArrowTap: () {
+                    calendarNotifier
+                        .onWeekNumberChange(calendarState.weekNumber + 1);
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeOut,
@@ -78,7 +84,7 @@ class _CalendarViewState extends ConsumerWidget {
             ),
           ],
         ),
-        TableCalendar<Event>(
+        TableCalendar<Schedule>(
           firstDay: calendarState.kFirstDay,
           lastDay: calendarState.kLastDay,
           headerVisible: false,
@@ -104,7 +110,7 @@ class _CalendarViewState extends ConsumerWidget {
         ),
         const SizedBox(height: 8.0),
         Expanded(
-          child: ValueListenableBuilder<List<Event>>(
+          child: ValueListenableBuilder<List<Schedule>>(
             valueListenable: calendarState.selectedEvents ??
                 ValueNotifier(
                   calendarNotifier.getEventsForDay(

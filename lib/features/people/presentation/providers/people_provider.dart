@@ -81,6 +81,35 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
     state = state.copyWith(
       isLastPage: false,
       isLoading: false,
+      isFirstLoad: false,
+      offset: state.offset + 10,
+      people: [...state.people, ...people],
+    );
+  }
+
+  Future firstLoad() async {
+    if (state.isLoading || state.isLastPage || !state.isFirstLoad) return;
+
+    state = state.copyWith(
+      isLoading: true,
+    );
+
+    final people = await peopleRepository.getPeopleByPage(
+      limit: state.limit,
+      offset: state.offset,
+    );
+
+    if (people.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        isLastPage: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      isLastPage: false,
+      isLoading: false,
       offset: state.offset + 10,
       people: [...state.people, ...people],
     );
@@ -145,6 +174,7 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
 
 class PeopleState {
   final bool isLastPage;
+  final bool isFirstLoad;
   final int limit;
   final int offset;
   final bool isLoading;
@@ -152,6 +182,7 @@ class PeopleState {
 
   PeopleState({
     this.isLastPage = false,
+    this.isFirstLoad = true,
     this.limit = 10,
     this.offset = 0,
     this.isLoading = false,
@@ -160,6 +191,7 @@ class PeopleState {
 
   PeopleState copyWith({
     bool? isLastPage,
+    bool? isFirstLoad,
     int? limit,
     int? offset,
     bool? isLoading,
@@ -167,6 +199,7 @@ class PeopleState {
   }) =>
       PeopleState(
         isLastPage: isLastPage ?? this.isLastPage,
+        isFirstLoad: isFirstLoad ?? this.isFirstLoad,
         limit: limit ?? this.limit,
         offset: offset ?? this.offset,
         isLoading: isLoading ?? this.isLoading,

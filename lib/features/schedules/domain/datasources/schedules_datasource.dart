@@ -1,8 +1,9 @@
 import 'package:cars_app/features/schedules/domain/domain.dart';
 
 abstract class SchedulesDatasource {
-  Future<List<Schedule>> getSchedulesByPage({int limit = 10, int offset = 0});
+  Future<List<Schedule>> getSchedulesByDay(String day);
+  Future<List<Schedule>> getSchedulesByWeek(int weekNumber);
   Future<Schedule> getScheduleById(int id);
-  Future<Schedule> createUpdateSchedules(Map<String, dynamic> serviceLike);
+  Future<Schedule> createUpdateSchedules(Map<String, dynamic> scheduleLike);
   Future<Map<String, dynamic>> deleteSchedule(int id);
 }

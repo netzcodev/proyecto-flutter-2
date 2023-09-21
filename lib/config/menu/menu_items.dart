@@ -39,12 +39,12 @@ const globalMenuItems = <MenuItem>[
     link: '/people',
     icon: Icons.accessibility_new_outlined,
   ),
-  MenuItem(
-    title: 'Schedules',
-    subTitle: 'Manage Schedules',
-    link: '/schedules',
-    icon: Icons.schedule_outlined,
-  ),
+  // MenuItem(
+  //   title: 'Schedules',
+  //   subTitle: 'Manage Schedules',
+  //   link: '/schedules',
+  //   icon: Icons.schedule_outlined,
+  // ),
   MenuItem(
     title: 'Services',
     subTitle: 'Manage Services',
