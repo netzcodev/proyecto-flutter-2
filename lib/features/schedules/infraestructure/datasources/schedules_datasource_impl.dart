@@ -59,8 +59,8 @@ class SchedulesDatasourceImpl extends SchedulesDatasource {
   Future<Schedule> getScheduleById(int id) async {
     try {
       final response = await dio.get('/schedules/$id');
-      final person = SchedulesMapper.jsonToEntity(response.data);
-      return person;
+      final schedule = SchedulesMapper.jsonToEntity(response.data);
+      return schedule;
     } on DioException catch (e) {
       if (e.response!.statusCode == 404) throw ScheduleNotFound();
       throw Exception();

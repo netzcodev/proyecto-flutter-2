@@ -45,6 +45,12 @@ class _CalendarView extends ConsumerWidget {
 class _CalendarViewState extends ConsumerWidget {
   late final PageController _pageController;
 
+  void showSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Cita Cancelada')));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final calendarState = ref.watch(schedulesProvider);
@@ -131,8 +137,28 @@ class _CalendarViewState extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: ListTile(
-                      onTap: () => print('${value[index]}'),
-                      title: Text('${value[index]}'),
+                      onTap: () {
+                        context.push('/schedules/${value[index].id}');
+                      },
+                      title: Text(
+                        '${value[index].name} - ${value[index].time.hour}:${value[index].time.minute < 10 ? '0' : ''}${value[index].time.minute}${value[index].time.period == DayPeriod.am ? 'am' : 'pm'}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      subtitle: Text(
+                        value[index].description,
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.cancel_outlined),
+                        onPressed: () => calendarNotifier
+                            .deleteSchedules(value[index].id!)
+                            .then((value) {
+                          if (!value) return;
+                          showSnackbar(context);
+                        }),
+                      ),
                     ),
                   );
                 },

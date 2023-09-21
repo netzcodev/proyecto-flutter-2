@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class SchedulesMapper {
   static jsonToEntity(Map<String, dynamic> json) => Schedule(
+        id: json['id'],
         customerId: json['customerId'],
         employeeId: json['employeeId'],
         date: json['date'],
@@ -12,5 +13,7 @@ class SchedulesMapper {
         ),
         name: json['name'],
         description: json['description'],
+        createdAt: json['createdAt'],
+        updatedAt: json['updatedAt'],
       );
 }

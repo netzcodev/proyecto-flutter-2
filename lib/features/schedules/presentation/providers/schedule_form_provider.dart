@@ -30,6 +30,8 @@ class ScheduleFormNotifier extends StateNotifier<ScheduleFormState> {
             employeeId: SelectEmployee.dirty(schedule.employeeId),
             date: CustomDate.dirty(schedule.date),
             time: CustomTime.dirty(schedule.time),
+            name: ScheduleName.dirty(schedule.name),
+            description: Description.dirty(schedule.description),
           ),
         );
 

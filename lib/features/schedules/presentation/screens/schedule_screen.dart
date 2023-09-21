@@ -181,7 +181,7 @@ class _ScheduleInformation extends ConsumerWidget {
               label: 'Empleado',
               selected: authState.user!.role == 'mecanico'
                   ? authState.user!.id
-                  : scheduleForm.customerId.value,
+                  : scheduleForm.employeeId.value,
               onSelected: (value) => ref
                   .read(scheduleFormProvider(schedule).notifier)
                   .onEmployeeChanged(value ?? -1),

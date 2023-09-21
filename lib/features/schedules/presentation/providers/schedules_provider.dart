@@ -57,15 +57,64 @@ class SchedulesNotifier extends StateNotifier<SchedulesState> {
         final updatedMap =
             LinkedHashMap<DateTime, List<Schedule>>.from(state.kEvents ?? {});
         updatedMap[DateTime.parse(scheduleDate)] = updatedEvents;
-        state = state.copyWith(kEvents: updatedMap);
+        state = state.copyWith(
+          kEvents: updatedMap,
+          selectedEvents: ValueNotifier(
+            getEventsForDays(state.selectedDays),
+          ),
+        );
       } else {
         final newMap =
             LinkedHashMap<DateTime, List<Schedule>>.from(state.kEvents ?? {});
         newMap[DateTime.parse(scheduleDate)] = [schedule];
-        state = state.copyWith(kEvents: newMap);
+        state = state.copyWith(
+          kEvents: newMap,
+          selectedEvents: ValueNotifier(
+            getEventsForDays(state.selectedDays),
+          ),
+        );
       }
 
-      // _getEventsForDay(DateTime.parse(scheduleDate));
+      resetState();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteSchedules(int id) async {
+    try {
+      final schedule = await schedulesRepository.deleteSchedule(id);
+
+      if (state.kEvents != null) {
+        final updatedKEvents =
+            LinkedHashMap<DateTime, List<Schedule>>.from(state.kEvents!);
+
+        final scheduleDate = DateTime.parse(schedule['date']);
+
+        if (updatedKEvents.containsKey(scheduleDate)) {
+          final updatedEvents = updatedKEvents[scheduleDate] ?? [];
+          updatedEvents.removeWhere(
+            (event) => event.id == int.parse(schedule['id']),
+          );
+
+          // Actualizar kEvents con los eventos actualizados
+          if (updatedEvents.isEmpty) {
+            updatedKEvents.remove(scheduleDate);
+          } else {
+            updatedKEvents[scheduleDate] = updatedEvents;
+          }
+
+          // Actualizar el estado con los cambios
+          state = state.copyWith(
+            kEvents: updatedKEvents,
+            selectedEvents: ValueNotifier(
+              getEventsForDays(state.selectedDays),
+            ),
+          );
+        }
+      }
 
       return true;
     } catch (e) {
@@ -359,14 +408,3 @@ String _twoDigits(int n) {
     return '0$n';
   }
 }
-
-// bool _checkDataEventsChanged(List<Schedule> newSchedules,
-//     LinkedHashMap<DateTime, List<Schedule>> events) {
-//   return const DeepCollectionEquality.unordered().equals(
-//     events, // Datos actuales en kEvents (pueden ser nulos)
-//     LinkedHashMap<DateTime, List<Schedule>>.fromIterable(
-//       newSchedules,
-//       key: (schedule) => schedule.date,
-//     ), // Nuevos datos de la base de datos
-//   );
-// }
