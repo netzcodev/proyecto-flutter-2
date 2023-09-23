@@ -44,6 +44,11 @@ class VehicleScreen extends ConsumerWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (vehicleState.vehicle == null) return;
+            if (ref.read(authProvider).user!.role != 'cliente') {
+              ref
+                  .read(vehicleFormProvider(vehicleState.vehicle!).notifier)
+                  .setCustomerId(ref.read(authProvider).user!.id);
+            }
             ref
                 .read(vehicleFormProvider(vehicleState.vehicle!).notifier)
                 .onFormSubmit()
@@ -103,6 +108,7 @@ class _VehicleInformation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vehicleForm = ref.watch(vehicleFormProvider(vehicle));
+    final authSatate = ref.read(authProvider);
     final customersList = ref
         .watch(peopleProvider)
         .people
@@ -180,18 +186,21 @@ class _VehicleInformation extends ConsumerWidget {
                 .onMileageChanged(int.tryParse(value) ?? -1),
           ),
           const SizedBox(height: 15),
-          OwnerDropdown(
-            enabled: permissions.modify == 1 ? true : false,
-            entityList: customersList,
-            displayNameFunction: null,
-            label: 'Propietario',
-            selected: vehicleForm.customerId.value,
-            onSelected: (value) => ref
-                .read(vehicleFormProvider(vehicle).notifier)
-                .onOwnerChanged(value ?? -1),
-            errorMessage: vehicleForm.customerId.errorMessage,
-          ),
-          const SizedBox(height: 25),
+          if (authSatate.user!.role != 'cliente')
+            OwnerDropdown(
+              enabled: permissions.modify == 1 ? true : false,
+              entityList: customersList,
+              displayNameFunction: null,
+              label: 'Propietario',
+              selected: authSatate.user!.role != 'cliente'
+                  ? authSatate.user!.id
+                  : vehicleForm.customerId.value,
+              onSelected: (value) => ref
+                  .read(vehicleFormProvider(vehicle).notifier)
+                  .onOwnerChanged(value ?? -1),
+              errorMessage: vehicleForm.customerId.errorMessage,
+            ),
+          if (authSatate.user!.role != 'cliente') const SizedBox(height: 25),
           if (ref.watch(authProvider).user!.isAdmin)
             const _StatusSelector(
               status: 'A',

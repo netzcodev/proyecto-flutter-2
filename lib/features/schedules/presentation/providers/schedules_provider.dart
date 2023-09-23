@@ -31,6 +31,8 @@ class SchedulesNotifier extends StateNotifier<SchedulesState> {
               hashCode: _getHashCode,
             ),
             weekNumber: _getWeekNumber(DateTime.now()),
+            generalWeekNumber: _getWeekNumber(DateTime.now()),
+            generalEvents: LinkedHashMap<DateTime, List<Schedule>>(),
           ),
         ) {
     firstLoad();
@@ -173,19 +175,15 @@ class SchedulesNotifier extends StateNotifier<SchedulesState> {
     } else {
       bagDays.add(selectedDay);
     }
-
-    if (!isSameDay(state.selectedDay, selectedDay)) {
-      state = state.copyWith(
-        selectedDays: bagDays,
-        focusedDay: ValueNotifier(focusedDay),
-        rangeStart: null,
-        rangeEnd: null,
-        rangeSelectionMode: RangeSelectionMode.toggledOff,
-        selectedEvents: !state.isFirstLoad
-            ? ValueNotifier(getEventsForDays(state.selectedDays))
-            : state.selectedEvents,
-      );
-    }
+    print(bagDays);
+    state = state.copyWith(
+      selectedDays: bagDays,
+      focusedDay: ValueNotifier(focusedDay),
+      rangeStart: null,
+      rangeEnd: null,
+      rangeSelectionMode: RangeSelectionMode.toggledOff,
+      selectedEvents: ValueNotifier(getEventsForDays(bagDays)),
+    );
   }
 
   List<Schedule> getEventsForDay(DateTime day) {
@@ -312,6 +310,51 @@ class SchedulesNotifier extends StateNotifier<SchedulesState> {
     state = state.copyWith(
       isLoading: false,
       kEvents: updatedKEvents,
+      generalEvents: updatedKEvents,
+    );
+  }
+
+  Future loadNextWeek() async {
+    state = state.copyWith(
+        isLoading: true, generalWeekNumber: state.generalWeekNumber + 1);
+
+    final newSchedules =
+        await schedulesRepository.getSchedulesByWeek(state.generalWeekNumber);
+
+    if (newSchedules.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+      );
+      return;
+    }
+
+    final updatedGeneralEvents =
+        LinkedHashMap<DateTime, List<Schedule>>.from(state.generalEvents);
+
+    for (final schedule in newSchedules) {
+      final scheduleDate = DateTime.parse(schedule.date);
+
+      if (updatedGeneralEvents.containsKey(scheduleDate)) {
+        final updatedEvents = updatedGeneralEvents[scheduleDate] ?? [];
+        final index =
+            updatedEvents.indexWhere((event) => event.id == schedule.id);
+
+        // Actualizar o agregar el evento según corresponda
+        if (index >= 0) {
+          updatedEvents[index] = schedule;
+        } else {
+          updatedEvents.add(schedule);
+        }
+        updatedGeneralEvents[scheduleDate] = updatedEvents;
+      } else {
+        updatedGeneralEvents[scheduleDate] = [schedule];
+      }
+    }
+
+    // Actualizar el estado con los eventos de la semana seleccionada
+    state = state.copyWith(
+      isLoading: false,
+      generalEvents: updatedGeneralEvents,
     );
   }
 }
@@ -323,6 +366,7 @@ class SchedulesState {
   final ValueNotifier<DateTime> focusedDay;
   final ValueNotifier<List<Schedule>>? selectedEvents;
   final LinkedHashMap<DateTime, List<Schedule>>? kEvents;
+  final LinkedHashMap<DateTime, List<Schedule>> generalEvents;
   final CalendarFormat calendarFormat;
   final DateTime? rangeStart;
   final DateTime? rangeEnd;
@@ -332,6 +376,7 @@ class SchedulesState {
   final DateTime kLastDay;
   final Set<DateTime> selectedDays;
   final int weekNumber;
+  final int generalWeekNumber;
 
   SchedulesState({
     this.isFirstLoad = true,
@@ -340,6 +385,7 @@ class SchedulesState {
     required this.focusedDay,
     this.selectedEvents,
     this.kEvents,
+    required this.generalEvents,
     this.calendarFormat = CalendarFormat.week,
     this.rangeStart,
     this.rangeEnd,
@@ -349,27 +395,29 @@ class SchedulesState {
     required this.kLastDay,
     required this.selectedDays,
     required this.weekNumber,
+    required this.generalWeekNumber,
   });
 
   DateTime newMethod() => DateTime.now();
 
-  SchedulesState copyWith({
-    bool? isFirstLoad,
-    bool? isLoading,
-    DateTime? selectedDay,
-    ValueNotifier<DateTime>? focusedDay,
-    ValueNotifier<List<Schedule>>? selectedEvents,
-    LinkedHashMap<DateTime, List<Schedule>>? kEvents,
-    CalendarFormat? calendarFormat,
-    DateTime? rangeStart,
-    DateTime? rangeEnd,
-    RangeSelectionMode? rangeSelectionMode,
-    DateTime? kToday,
-    DateTime? kFirstDay,
-    DateTime? kLastDay,
-    Set<DateTime>? selectedDays,
-    int? weekNumber,
-  }) =>
+  SchedulesState copyWith(
+          {bool? isFirstLoad,
+          bool? isLoading,
+          DateTime? selectedDay,
+          ValueNotifier<DateTime>? focusedDay,
+          ValueNotifier<List<Schedule>>? selectedEvents,
+          LinkedHashMap<DateTime, List<Schedule>>? kEvents,
+          LinkedHashMap<DateTime, List<Schedule>>? generalEvents,
+          CalendarFormat? calendarFormat,
+          DateTime? rangeStart,
+          DateTime? rangeEnd,
+          RangeSelectionMode? rangeSelectionMode,
+          DateTime? kToday,
+          DateTime? kFirstDay,
+          DateTime? kLastDay,
+          Set<DateTime>? selectedDays,
+          int? weekNumber,
+          int? generalWeekNumber}) =>
       SchedulesState(
         isFirstLoad: isFirstLoad ?? this.isFirstLoad,
         isLoading: isLoading ?? this.isLoading,
@@ -377,6 +425,7 @@ class SchedulesState {
         focusedDay: focusedDay ?? this.focusedDay,
         selectedEvents: selectedEvents ?? this.selectedEvents,
         kEvents: kEvents ?? this.kEvents,
+        generalEvents: generalEvents ?? this.generalEvents,
         rangeStart: rangeStart,
         rangeEnd: rangeEnd,
         rangeSelectionMode: rangeSelectionMode ?? this.rangeSelectionMode,
@@ -386,6 +435,7 @@ class SchedulesState {
         calendarFormat: calendarFormat ?? this.calendarFormat,
         selectedDays: selectedDays ?? this.selectedDays,
         weekNumber: weekNumber ?? this.weekNumber,
+        generalWeekNumber: generalWeekNumber ?? this.generalWeekNumber,
       );
 }
 

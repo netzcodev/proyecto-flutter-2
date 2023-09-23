@@ -1,28 +1,35 @@
-import 'package:cars_app/features/schedules/schedules.dart';
+import 'package:cars_app/features/services/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 
-class ServicesScreen extends StatelessWidget {
+class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
 
   @override
+  State<ServicesScreen> createState() => _ServicesScreenState();
+}
+
+class _ServicesScreenState extends State<ServicesScreen> {
+  @override
   Widget build(BuildContext context) {
-    final scaffoldKey = GlobalKey<ScaffoldState>();
+    final scafoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      drawer: SideMenu(scaffoldKey: scaffoldKey),
+      drawer: SideMenu(scaffoldKey: scafoldKey),
       appBar: AppBar(
-        title: const Text('Servicios'),
+        title: const Text('Vehiculos'),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
         ],
       ),
       body: const _ServicesView(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          context.push('/vehicles/0');
+        },
         label: const Text('vehiculo'),
         icon: const Icon(Icons.add),
       ),
@@ -45,9 +52,9 @@ class _ServicesViewState extends ConsumerState {
     super.initState();
 
     scrollController.addListener(() {
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        ref.read(schedulesProvider.notifier).loadNextWeek();
+      if ((scrollController.position.pixels + 400) >=
+          scrollController.position.maxScrollExtent) {
+        ref.read(servicesProvider.notifier).loadNextPage();
       }
     });
   }
@@ -61,19 +68,19 @@ class _ServicesViewState extends ConsumerState {
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Cita Cancelada')));
+        .showSnackBar(const SnackBar(content: Text('Vehiculo Eliminado')));
   }
 
   @override
   Widget build(BuildContext context) {
-    final calendarState = ref.watch(schedulesProvider);
+    final serviceState = ref.watch(servicesProvider);
 
     return Column(
-      children: calendarState.generalEvents.isEmpty
+      children: serviceState.services.isEmpty
           ? []
-          : calendarState.generalEvents.entries.map((entry) {
-              final day = entry.key;
-              final events = entry.value;
+          : serviceState.services.map((entry) {
+              final day = DateTime.now();
+              final serivces = serviceState.services;
               return Expanded(
                 child: Column(
                   children: [
@@ -85,10 +92,10 @@ class _ServicesViewState extends ConsumerState {
                       ),
                     ),
                     ListView.builder(
-                      itemCount: events.length,
+                      itemCount: serivces.length,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        final event = events[index];
+                        final service = serivces[index];
                         return Container(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12.0,
@@ -101,15 +108,14 @@ class _ServicesViewState extends ConsumerState {
                           child: ListTile(
                             onTap: () => context.push('/services/:id'),
                             title: Text(
-                              '${event.name} - ${event.time.hour}:${event.time.minute < 10 ? '0' : ''}${event.time.minute}${event.time.period == DayPeriod.am ? 'am' : 'pm'}',
+                              '${service.name} - ${service.duration}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
                             ),
-                            subtitle: Text(
-                              event.description,
-                            ),
+                            subtitle:
+                                Text('Próximo Servicio: ${service.comingDate}'),
                           ),
                         );
                       },

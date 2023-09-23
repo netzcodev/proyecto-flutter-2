@@ -31,6 +31,7 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
       time: TimeOfDay.now(),
       name: '',
       description: '',
+      services: [],
     );
   }
 

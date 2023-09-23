@@ -160,6 +160,10 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
   void onTypeChanged(String value) {
     state = state.copyWith(type: value);
   }
+
+  void setCustomerId(int value) {
+    state = state.copyWith(customerId: Select.dirty(value));
+  }
 }
 
 // TODO: Acá se puede crear tantos campos personalizados como se necesite ej: Plate, Select.

@@ -1,7 +1,7 @@
 import 'package:cars_app/features/services/domain/domain.dart';
 
 class ServicesRepositoryImpl extends ServicesRepository {
-  final ServicesRepository datasource;
+  final ServicesDatasource datasource;
 
   ServicesRepositoryImpl({required this.datasource});
 
@@ -21,7 +21,9 @@ class ServicesRepositoryImpl extends ServicesRepository {
   }
 
   @override
-  Future<List<Service>> getServicesByPage({int limit = 10, int offset = 0}) {
-    return datasource.getServicesByPage(limit: limit, offset: offset);
+  Future<List<Service>> getServicesByPage(
+      {int limit = 10, int offset = 0, int scheduleId = 0}) {
+    return datasource.getServicesByPage(
+        limit: limit, offset: offset, scheduleId: scheduleId);
   }
 }

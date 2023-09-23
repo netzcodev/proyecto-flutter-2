@@ -69,10 +69,16 @@ final goRouterProvider = Provider(
             scheduleId: int.parse(state.pathParameters['id']!),
           ),
         ),
-        GoRoute(
-          path: '/services',
-          builder: (context, state) => const ServicesScreen(),
-        ),
+        // GoRoute(
+        //   path: '/services',
+        //   builder: (context, state) => const ServicesScreen(),
+        // ),
+        // GoRoute(
+        //   path: '/services/:id',
+        //   builder: (context, state) => ServicesScheduleScreen(
+        //     scheduleId: int.parse(state.pathParameters['id']!),
+        //   ),
+        // ),
         GoRoute(
           path: '/vehicles',
           builder: (context, state) => const VehiclesScreen(),

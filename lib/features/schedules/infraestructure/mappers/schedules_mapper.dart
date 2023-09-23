@@ -1,4 +1,5 @@
 import 'package:cars_app/features/schedules/domain/domain.dart';
+import 'package:cars_app/features/services/services.dart';
 import 'package:flutter/material.dart';
 
 class SchedulesMapper {
@@ -13,6 +14,10 @@ class SchedulesMapper {
         ),
         name: json['name'],
         description: json['description'],
+        services:
+            json['services'] == null || List.from(json['services']).isEmpty
+                ? []
+                : ServiceMapper.jsonToListEntity(json['services']),
         createdAt: json['createdAt'],
         updatedAt: json['updatedAt'],
       );

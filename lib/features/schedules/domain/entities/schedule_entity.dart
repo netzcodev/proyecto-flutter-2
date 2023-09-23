@@ -1,10 +1,11 @@
+import 'package:cars_app/features/services/services.dart';
 import 'package:flutter/material.dart';
 
 class Schedule {
   final int? id;
   final int customerId;
   final int employeeId;
-  final int? serviceId;
+  final List<Service> services;
   final String date;
   final TimeOfDay time;
   final String name;
@@ -18,7 +19,7 @@ class Schedule {
     required this.employeeId,
     required this.name,
     required this.description,
-    this.serviceId,
+    required this.services,
     required this.date,
     required this.time,
     this.createdAt,

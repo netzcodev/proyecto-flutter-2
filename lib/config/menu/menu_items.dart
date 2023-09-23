@@ -45,12 +45,12 @@ const globalMenuItems = <MenuItem>[
   //   link: '/schedules',
   //   icon: Icons.schedule_outlined,
   // ),
-  MenuItem(
-    title: 'Services',
-    subTitle: 'Manage Services',
-    link: '/services',
-    icon: Icons.room_service_outlined,
-  ),
+  // MenuItem(
+  //   title: 'Services',
+  //   subTitle: 'Manage Services',
+  //   link: '/services',
+  //   icon: Icons.room_service_outlined,
+  // ),
   MenuItem(
     title: 'Vehicles',
     subTitle: 'Manage Vehicles',
