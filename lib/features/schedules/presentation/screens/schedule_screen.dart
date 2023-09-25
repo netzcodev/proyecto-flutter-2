@@ -48,7 +48,8 @@ class ScheduleScreen extends ConsumerWidget {
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (scheduleId != 0)
+            if (scheduleId != 0 &&
+                ref.watch(authProvider).user!.role != 'cliente')
               FloatingActionButton(
                 onPressed: () {
                   _showServiceDialog(context, ref,
@@ -105,6 +106,15 @@ class _ScheduleInformation extends ConsumerWidget {
   final Schedule schedule;
   final ScrollController _scrollController = ScrollController();
   _ScheduleInformation({required this.schedule});
+
+  void _showDeleteSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Cita Eliminada'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -237,14 +247,31 @@ class _ScheduleInformation extends ConsumerWidget {
                         ),
                       ),
                       leading: const Icon(Icons.build_outlined),
-                      trailing: IconButton(
-                          onPressed: () {
-                            // ref.read(scheduleProvider(service.scheduleId!).notifier).onDeletedService(service.id);
-                            ref
-                                .read(servicesProvider.notifier)
-                                .deleteService(service.id!);
-                          },
-                          icon: const Icon(Icons.cancel_outlined)),
+                      trailing: (DateTime.parse(service.currentDate)
+                                  .isAtSameMomentAs(DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day)) ||
+                              DateTime.parse(service.currentDate).isAfter(
+                                  DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day)))
+                          ? IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(servicesProvider.notifier)
+                                    .deleteService(service.id!)
+                                    .then(
+                                  (value) {
+                                    if (!value) return;
+                                    _showDeleteSnackbar(context);
+                                    ref.read(goRouterProvider).go('/calendar');
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.cancel_outlined))
+                          : null,
                       subtitle: Text(service.description),
                     ),
                   );

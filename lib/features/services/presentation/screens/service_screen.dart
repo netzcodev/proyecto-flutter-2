@@ -1,6 +1,5 @@
 import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/auth/presentation/providers/providers.dart';
-import 'package:cars_app/features/schedules/schedules.dart';
 // import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/services/domain/domain.dart';
 import 'package:cars_app/features/services/presentation/providers/providers.dart';

@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:cars_app/features/schedules/domain/domain.dart';
 import 'package:cars_app/features/schedules/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
@@ -9,9 +10,11 @@ final scheduleFormProvider = StateNotifierProvider.autoDispose
     .family<ScheduleFormNotifier, ScheduleFormState, Schedule>((ref, schedule) {
   final createUpdateCallback =
       ref.watch(schedulesProvider.notifier).createOrUpdateSchedules;
+  final authSatate = ref.watch(authProvider);
 
   return ScheduleFormNotifier(
     schedule: schedule,
+    authState: authSatate,
     onSubmitCallBack: createUpdateCallback,
   );
 });
@@ -23,11 +26,16 @@ class ScheduleFormNotifier extends StateNotifier<ScheduleFormState> {
   ScheduleFormNotifier({
     this.onSubmitCallBack,
     required Schedule schedule,
+    required AuthState authState,
   }) : super(
           ScheduleFormState(
             id: schedule.id,
-            customerId: SelectCustomer.dirty(schedule.customerId),
-            employeeId: SelectEmployee.dirty(schedule.employeeId),
+            customerId: authState.user!.role == 'cliente'
+                ? SelectCustomer.dirty(authState.user!.id)
+                : SelectCustomer.dirty(schedule.customerId),
+            employeeId: authState.user!.role == 'mecanico'
+                ? SelectEmployee.dirty(authState.user!.id)
+                : SelectEmployee.dirty(schedule.employeeId),
             date: CustomDate.dirty(schedule.date),
             time: CustomTime.dirty(schedule.time),
             name: ScheduleName.dirty(schedule.name),
@@ -62,8 +70,6 @@ class ScheduleFormNotifier extends StateNotifier<ScheduleFormState> {
   void _touchedEveryField() {
     state = state.copyWith(
       isValidForm: Formz.validate([
-        SelectCustomer.dirty(state.customerId.value),
-        SelectEmployee.dirty(state.employeeId.value),
         Description.dirty(state.description.value),
         ScheduleName.dirty(state.name.value),
         CustomDate.dirty(state.date.value),

@@ -14,8 +14,9 @@ class SelectEmployee extends FormzInput<int, SelectEmployeeError> {
   String? get errorMessage {
     if (isValid || isPure) return null;
 
-    if (displayError == SelectEmployeeError.empty)
+    if (displayError == SelectEmployeeError.empty) {
       return 'El campo es requerido';
+    }
     if (displayError == SelectEmployeeError.format) {
       return 'No tiene formato de selector';
     }

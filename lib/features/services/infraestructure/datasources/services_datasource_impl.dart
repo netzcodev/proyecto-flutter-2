@@ -38,9 +38,17 @@ class ServicesDatasourceImpl extends ServicesDatasource {
   }
 
   @override
-  Future<Map<String, dynamic>> deleteService(int id) {
-    // TODO: implement deleteService
-    throw UnimplementedError();
+  Future<Map<String, dynamic>> deleteService(int id) async {
+    try {
+      final response = await dio.delete('/services/$id');
+      final deletedService = response.data;
+      return deletedService;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 404) throw ServiceNotFound();
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
   }
 
   @override

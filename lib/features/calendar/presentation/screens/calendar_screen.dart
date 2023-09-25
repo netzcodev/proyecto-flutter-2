@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,7 @@ class _CalendarViewState extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final calendarState = ref.watch(schedulesProvider);
     final calendarNotifier = ref.watch(schedulesProvider.notifier);
+    final authState = ref.watch(authProvider);
 
     return Column(
       children: [
@@ -138,6 +140,7 @@ class _CalendarViewState extends ConsumerWidget {
                     ),
                     child: ListTile(
                       onTap: () {
+                        if (authState.user!.role == 'cliente') return;
                         context.push('/schedules/${value[index].id}');
                       },
                       title: Text(
@@ -150,15 +153,28 @@ class _CalendarViewState extends ConsumerWidget {
                       subtitle: Text(
                         value[index].description,
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.cancel_outlined),
-                        onPressed: () => calendarNotifier
-                            .deleteSchedules(value[index].id!)
-                            .then((value) {
-                          if (!value) return;
-                          showSnackbar(context);
-                        }),
-                      ),
+                      trailing: (DateTime.parse(value[index].date)
+                                  .isAtSameMomentAs(DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day)) ||
+                              DateTime.parse(value[index].date).isAfter(
+                                  DateTime(
+                                      DateTime.now().year,
+                                      DateTime.now().month,
+                                      DateTime.now().day)))
+                          ? IconButton(
+                              icon: const Icon(Icons.cancel_outlined),
+                              onPressed: () => calendarNotifier
+                                  .deleteSchedules(value[index].id!)
+                                  .then(
+                                (value) {
+                                  if (!value) return;
+                                  showSnackbar(context);
+                                },
+                              ),
+                            )
+                          : null,
                     ),
                   );
                 },

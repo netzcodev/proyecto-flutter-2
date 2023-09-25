@@ -14,8 +14,9 @@ class SelectCustomer extends FormzInput<int, SelectCustomerError> {
   String? get errorMessage {
     if (isValid || isPure) return null;
 
-    if (displayError == SelectCustomerError.empty)
+    if (displayError == SelectCustomerError.empty) {
       return 'El campo es requerido';
+    }
     if (displayError == SelectCustomerError.format) {
       return 'No tiene formato de selector';
     }
