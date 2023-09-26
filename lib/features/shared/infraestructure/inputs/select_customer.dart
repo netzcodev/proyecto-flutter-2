@@ -1,7 +1,7 @@
 import 'package:formz/formz.dart';
 
 // Define input validation errors
-enum SelectCustomerError { empty, format }
+enum SelectCustomerError { empty }
 
 // Extend FormzInput and provide the input type and error type.
 class SelectCustomer extends FormzInput<int, SelectCustomerError> {
@@ -17,9 +17,6 @@ class SelectCustomer extends FormzInput<int, SelectCustomerError> {
     if (displayError == SelectCustomerError.empty) {
       return 'El campo es requerido';
     }
-    if (displayError == SelectCustomerError.format) {
-      return 'No tiene formato de selector';
-    }
 
     return null;
   }
@@ -27,8 +24,7 @@ class SelectCustomer extends FormzInput<int, SelectCustomerError> {
   // Override validator to handle validating a given input value.
   @override
   SelectCustomerError? validator(int value) {
-    if (value == 0) return SelectCustomerError.empty;
-    if (value.runtimeType != int) return SelectCustomerError.format;
+    if (value <= 0) return SelectCustomerError.empty;
 
     return null;
   }

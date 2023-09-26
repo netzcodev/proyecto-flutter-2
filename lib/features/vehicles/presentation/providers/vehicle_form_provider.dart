@@ -1,3 +1,4 @@
+import 'package:cars_app/features/auth/presentation/providers/providers.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:cars_app/features/vehicles/domain/domain.dart';
 import 'package:cars_app/features/vehicles/presentation/providers/providers.dart';
@@ -8,10 +9,11 @@ final vehicleFormProvider = StateNotifierProvider.autoDispose
     .family<VehicleFormNotifier, VehicleFormState, Vehicle>((ref, vehicle) {
   final createUpdateCallback =
       ref.watch(vehiclesProvider.notifier).createOrUpdateVehicles;
-
+  final authState = ref.read(authProvider);
   return VehicleFormNotifier(
     vehicle: vehicle,
     onSubmitCallBack: createUpdateCallback,
+    authState: authState,
   );
 });
 
@@ -22,6 +24,7 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
   VehicleFormNotifier({
     this.onSubmitCallBack,
     required Vehicle vehicle,
+    required AuthState authState,
   }) : super(
           VehicleFormState(
             id: vehicle.id,
@@ -33,7 +36,9 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
             color: vehicle.color,
             mileage: Mileage.dirty(vehicle.mileage),
             plate: Plate.dirty(vehicle.plate),
-            customerId: Select.dirty(vehicle.customerId),
+            customerId: authState.user!.role == 'cliente'
+                ? Select.dirty(authState.user!.id)
+                : Select.dirty(vehicle.customerId),
           ),
         );
 
@@ -65,11 +70,9 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
       isValidForm: Formz.validate(
         [
           Plate.dirty(state.plate.value),
-          Select.dirty(state.customerId.value),
           Fuel.dirty(state.fuel.value),
           Mileage.dirty(state.mileage.value),
           VehicleName.dirty(state.name.value),
-          Select.dirty(state.customerId.value),
         ],
       ),
     );
@@ -84,7 +87,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
         Fuel.dirty(state.fuel.value),
         Mileage.dirty(state.mileage.value),
         VehicleName.dirty(value),
-        Select.dirty(state.customerId.value),
       ]),
     );
   }
@@ -98,7 +100,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
         Fuel.dirty(value),
         Mileage.dirty(state.mileage.value),
         VehicleName.dirty(state.name.value),
-        Select.dirty(state.customerId.value),
       ]),
     );
   }
@@ -112,7 +113,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
         Fuel.dirty(state.fuel.value),
         Mileage.dirty(value),
         VehicleName.dirty(state.name.value),
-        Select.dirty(state.customerId.value),
       ]),
     );
   }
@@ -126,7 +126,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
         Fuel.dirty(state.fuel.value),
         Mileage.dirty(state.mileage.value),
         VehicleName.dirty(state.name.value),
-        Select.dirty(state.customerId.value),
       ]),
     );
   }
@@ -136,7 +135,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
       customerId: Select.dirty(value),
       isValidForm: Formz.validate([
         Plate.dirty(state.plate.value),
-        Select.dirty(state.customerId.value),
         Fuel.dirty(state.fuel.value),
         Mileage.dirty(state.mileage.value),
         VehicleName.dirty(state.name.value),
@@ -159,10 +157,6 @@ class VehicleFormNotifier extends StateNotifier<VehicleFormState> {
 
   void onTypeChanged(String value) {
     state = state.copyWith(type: value);
-  }
-
-  void setCustomerId(int value) {
-    state = state.copyWith(customerId: Select.dirty(value));
   }
 }
 

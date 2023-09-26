@@ -290,7 +290,13 @@ void _showServiceDialog(BuildContext context, WidgetRef ref,
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('${service.id == 0 ? 'Agregar' : 'Editar '} Servicio'),
+        title: Text(
+          '${service.id == 0 ? 'Agregar' : 'Editar '} Servicio',
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: ServiceFormWidget(service: service, scheduleId: scheduleId),
         actions: [
           TextButton(

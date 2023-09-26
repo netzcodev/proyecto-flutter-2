@@ -24,13 +24,13 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
     required Service service,
   }) : super(
           ServiceFormState(
-            duration: DurationService.dirty(service.duration),
-            name: ScheduleName.dirty(service.name),
-            description: Description.dirty(service.description),
-            currentDate: DateTime.now().toString(),
-            comingDate: _calcularFecha().toString(),
-            scheduleId: service.scheduleId,
-          ),
+              duration: DurationService.dirty(service.duration),
+              name: ScheduleName.dirty(service.name),
+              description: Description.dirty(service.description),
+              currentDate: DateTime.now().toString(),
+              comingDate: _calcularFecha().toString(),
+              scheduleId: service.scheduleId,
+              vehicleId: SelectVehicle.dirty(service.vehicleId)),
         );
 
   Future<bool> onFormSubmit() async {
@@ -45,6 +45,8 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
       'currentDate': state.currentDate,
       'comingDate': state.comingDate,
       'scheduleId': state.scheduleId,
+      'vehicleId': state.vehicleId.value,
+      'mileage': state.mileage.value,
     };
 
     try {
@@ -61,6 +63,8 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
           DurationService.dirty(state.duration.value),
           ScheduleName.dirty(state.name.value),
           Description.dirty(state.description.value),
+          SelectVehicle.dirty(state.vehicleId.value),
+          Mileage.dirty(state.mileage.value),
         ],
       ),
     );
@@ -73,6 +77,8 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
         DurationService.dirty(value),
         ScheduleName.dirty(state.name.value),
         Description.dirty(state.description.value),
+        SelectVehicle.dirty(state.vehicleId.value),
+        Mileage.dirty(state.mileage.value),
       ]),
     );
   }
@@ -84,6 +90,8 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
         DurationService.dirty(state.duration.value),
         ScheduleName.dirty(state.name.value),
         Description.dirty(value),
+        SelectVehicle.dirty(state.vehicleId.value),
+        Mileage.dirty(state.mileage.value),
       ]),
     );
   }
@@ -95,6 +103,34 @@ class ServiceFormNotifier extends StateNotifier<ServiceFormState> {
         DurationService.dirty(state.duration.value),
         ScheduleName.dirty(value),
         Description.dirty(state.description.value),
+        SelectVehicle.dirty(state.vehicleId.value),
+        Mileage.dirty(state.mileage.value),
+      ]),
+    );
+  }
+
+  void onVehicleChanged(int value) {
+    state = state.copyWith(
+      vehicleId: SelectVehicle.dirty(value),
+      isValidForm: Formz.validate([
+        DurationService.dirty(state.duration.value),
+        ScheduleName.dirty(state.name.value),
+        Description.dirty(state.description.value),
+        SelectVehicle.dirty(value),
+        Mileage.dirty(state.mileage.value),
+      ]),
+    );
+  }
+
+  void onMileageChanged(int value) {
+    state = state.copyWith(
+      mileage: Mileage.dirty(value),
+      isValidForm: Formz.validate([
+        DurationService.dirty(state.duration.value),
+        ScheduleName.dirty(state.name.value),
+        Description.dirty(state.description.value),
+        SelectVehicle.dirty(state.vehicleId.value),
+        Mileage.dirty(value),
       ]),
     );
   }
@@ -111,9 +147,11 @@ class ServiceFormState {
   final DurationService duration;
   final ScheduleName name;
   final Description description;
+  final Mileage mileage;
   final String currentDate;
   final String comingDate;
   final int? scheduleId;
+  final SelectVehicle vehicleId;
 
   ServiceFormState({
     this.isValidForm = false,
@@ -124,17 +162,21 @@ class ServiceFormState {
     required this.currentDate,
     required this.comingDate,
     this.scheduleId,
+    this.vehicleId = const SelectVehicle.dirty(0),
+    this.mileage = const Mileage.dirty(0),
   });
 
   ServiceFormState copyWith({
     bool? isValidForm,
     int? id,
     int? scheduleId,
+    SelectVehicle? vehicleId,
     DurationService? duration,
     ScheduleName? name,
     Description? description,
     String? currentDate,
     String? comingDate,
+    Mileage? mileage,
   }) =>
       ServiceFormState(
         isValidForm: isValidForm ?? this.isValidForm,
@@ -145,6 +187,8 @@ class ServiceFormState {
         currentDate: currentDate ?? this.currentDate,
         comingDate: comingDate ?? this.comingDate,
         scheduleId: scheduleId ?? this.scheduleId,
+        vehicleId: vehicleId ?? this.vehicleId,
+        mileage: mileage ?? this.mileage,
       );
 }
 

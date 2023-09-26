@@ -33,6 +33,8 @@ class ServiceNotifier extends StateNotifier<ServiceState> {
       currentDate: DateTime.now().toString(),
       comingDate: _calcularFecha().toString(),
       scheduleId: state.scheduleId,
+      vehicleId: 0,
+      mileage: 0,
     );
   }
 

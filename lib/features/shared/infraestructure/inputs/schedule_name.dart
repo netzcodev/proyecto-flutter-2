@@ -1,7 +1,7 @@
 import 'package:formz/formz.dart';
 
 // Define input validation errors
-enum ScheduleNameError { empty }
+enum ScheduleNameError { empty, length }
 
 // Extend FormzInput and provide the input type and error type.
 class ScheduleName extends FormzInput<String, ScheduleNameError> {
@@ -16,6 +16,10 @@ class ScheduleName extends FormzInput<String, ScheduleNameError> {
 
     if (displayError == ScheduleNameError.empty) return 'El campo es requerido';
 
+    if (displayError == ScheduleNameError.length) {
+      return 'El campo debe tener máximo 20 caracteres';
+    }
+
     return null;
   }
 
@@ -23,7 +27,7 @@ class ScheduleName extends FormzInput<String, ScheduleNameError> {
   @override
   ScheduleNameError? validator(String value) {
     if (value.isEmpty || value.trim().isEmpty) return ScheduleNameError.empty;
-
+    if (value.length > 20) return ScheduleNameError.length;
     return null;
   }
 }

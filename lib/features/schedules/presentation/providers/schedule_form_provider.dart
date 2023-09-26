@@ -10,11 +10,11 @@ final scheduleFormProvider = StateNotifierProvider.autoDispose
     .family<ScheduleFormNotifier, ScheduleFormState, Schedule>((ref, schedule) {
   final createUpdateCallback =
       ref.watch(schedulesProvider.notifier).createOrUpdateSchedules;
-  final authSatate = ref.watch(authProvider);
+  final authState = ref.watch(authProvider);
 
   return ScheduleFormNotifier(
     schedule: schedule,
-    authState: authSatate,
+    authState: authState,
     onSubmitCallBack: createUpdateCallback,
   );
 });
@@ -126,7 +126,7 @@ class ScheduleFormNotifier extends StateNotifier<ScheduleFormState> {
       isValidForm: Formz.validate([
         SelectCustomer.dirty(state.customerId.value),
         SelectEmployee.dirty(state.employeeId.value),
-        Description.dirty(state.description.value),
+        Description.dirty(value),
         ScheduleName.dirty(state.name.value),
         CustomDate.dirty(state.date.value),
         CustomTime.dirty(state.time.value),

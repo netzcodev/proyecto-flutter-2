@@ -12,5 +12,6 @@ export 'plate.dart';
 export 'schedule_name.dart';
 export 'select_customer.dart';
 export 'select_mechanic.dart';
+export 'select_vehicle.dart';
 export 'select.dart';
 export 'vehicle_name.dart';

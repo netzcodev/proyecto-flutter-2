@@ -11,6 +11,8 @@ class ServiceMapper {
         createdAt: json['createdAt'],
         name: json['name'],
         description: json['description'],
+        vehicleId: json['vehicleId'],
+        mileage: json['mileage'],
       );
 
   static List<Service> jsonToListEntity(List<dynamic> json) {

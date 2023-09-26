@@ -1,11 +1,12 @@
 import 'package:cars_app/features/services/domain/domain.dart';
 import 'package:cars_app/features/services/presentation/providers/providers.dart';
+import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final servicesProvider =
     StateNotifierProvider<ServicesNotifier, ServicesState>((ref) {
   final servicesRepository = ref.watch(servicesRepositoryProvider);
-
+  ref.watch(vehiclesProvider.notifier).loadNextPage();
   return ServicesNotifier(servicesRepository: servicesRepository);
 });
 

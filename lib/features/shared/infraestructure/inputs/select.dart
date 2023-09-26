@@ -1,7 +1,7 @@
 import 'package:formz/formz.dart';
 
 // Define input validation errors
-enum SelectError { empty, format }
+enum SelectError { empty }
 
 // Extend FormzInput and provide the input type and error type.
 class Select extends FormzInput<int, SelectError> {
@@ -15,9 +15,6 @@ class Select extends FormzInput<int, SelectError> {
     if (isValid || isPure) return null;
 
     if (displayError == SelectError.empty) return 'El campo es requerido';
-    if (displayError == SelectError.format) {
-      return 'No tiene formato de selector';
-    }
 
     return null;
   }
@@ -25,8 +22,7 @@ class Select extends FormzInput<int, SelectError> {
   // Override validator to handle validating a given input value.
   @override
   SelectError? validator(int value) {
-    if (value == 0) return SelectError.empty;
-    if (value.runtimeType != int) return SelectError.format;
+    if (value <= 0) return SelectError.empty;
 
     return null;
   }
