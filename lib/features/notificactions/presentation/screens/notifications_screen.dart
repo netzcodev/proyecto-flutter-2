@@ -1,4 +1,3 @@
-import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/notificactions/presentation/blocs/notifications/notifications_bloc.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';

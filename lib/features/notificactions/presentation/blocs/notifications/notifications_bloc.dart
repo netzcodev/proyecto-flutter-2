@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/notificactions/domain/entities/push_message.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service.dart';
 import 'package:cars_app/firebase_options.dart';

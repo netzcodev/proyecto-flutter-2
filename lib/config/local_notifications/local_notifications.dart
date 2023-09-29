@@ -1,13 +1,5 @@
-// import 'package:cars_app/config/config.dart';
-// import 'package:cars_app/features/notificactions/presentation/blocs/notifications/notifications_bloc.dart';
-// import 'package:cars_app/features/notificactions/presentation/screens/notifications_details_screen.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class LocalNotifications {
   static Future<void> requestPermissionLocalNotification() async {
@@ -70,18 +62,6 @@ class LocalNotifications {
 
   static void onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
-    // final String? payload = notificationResponse.payload;
-    // if (notificationResponse.payload != null) {
-    //   debugPrint('notification payload: $payload');
-    // }
-    // final flutterLocalNotificationPlugin = FlutterLocalNotificationsPlugin();
-    // final notitificationAppLauncDetails =
-    //     await flutterLocalNotificationPlugin.getNotificationAppLaunchDetails();
-    // // await Navigator.push(
-    // //   context,
-    // //   MaterialPageRoute<void>(builder: (context) => SecondScreen(payload)),
-    // // );
-
     selectNotificationStream.add(notificationResponse.payload!);
   }
 }

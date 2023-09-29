@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/notificactions/presentation/blocs/notifications/notifications_bloc.dart';
-import 'package:cars_app/features/notificactions/presentation/screens/notifications_details_screen.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
