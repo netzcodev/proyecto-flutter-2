@@ -22,4 +22,24 @@ class DashboardRepositoryImpl implements DashboardRepository {
       {int userId = 0, int limit = 10, int offset = 0}) {
     return datasource.getHistory(userId: userId, limit: limit, offset: offset);
   }
+
+  @override
+  Future<Service> updateComingService(Map<String, dynamic> data) {
+    return datasource.updateComingService(data);
+  }
+
+  @override
+  Future<Schedule> updateComingSchedule(Map<String, dynamic> data) {
+    return datasource.updateComingSchedule(data);
+  }
+
+  @override
+  Future<dynamic> getGeneralReport(int userId) {
+    return datasource.getGeneralReport(userId);
+  }
+
+  @override
+  Future<dynamic> dowloadReport(String url, String path) {
+    return datasource.dowloadReport(url, path);
+  }
 }

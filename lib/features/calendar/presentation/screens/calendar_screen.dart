@@ -7,19 +7,26 @@ import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
+    final userRole = ref.read(authProvider).user!.role;
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
         title: const Text('Calendar'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          if (userRole == 'cliente')
+            IconButton(
+              onPressed: () {
+                context.push('/notifications');
+              },
+              icon: const Icon(Icons.notifications_none_outlined),
+            )
         ],
       ),
       body: const _CalendarView(),

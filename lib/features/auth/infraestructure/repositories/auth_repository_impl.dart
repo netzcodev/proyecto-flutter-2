@@ -9,13 +9,13 @@ class AuthRepositoryImpl extends AuthRepository {
       : _dataSource = dataSource ?? AuthDataSourceImpl();
 
   @override
-  Future<User> checkAuthStatus(String token) {
-    return _dataSource.checkAuthStatus(token);
+  Future<User> checkAuthStatus(String token, String firebaseToken) {
+    return _dataSource.checkAuthStatus(token, firebaseToken);
   }
 
   @override
-  Future<User> login(String email, String password) {
-    return _dataSource.login(email, password);
+  Future<User> login(String email, String password, String firebaseToken) {
+    return _dataSource.login(email, password, firebaseToken);
   }
 
   @override

@@ -175,7 +175,6 @@ class SchedulesNotifier extends StateNotifier<SchedulesState> {
     } else {
       bagDays.add(selectedDay);
     }
-    print(bagDays);
     state = state.copyWith(
       selectedDays: bagDays,
       focusedDay: ValueNotifier(focusedDay),

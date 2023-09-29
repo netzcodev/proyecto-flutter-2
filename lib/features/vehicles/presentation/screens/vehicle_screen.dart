@@ -6,6 +6,7 @@ import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class VehicleScreen extends ConsumerWidget {
   final int vechicleId;
@@ -24,6 +25,7 @@ class VehicleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vehicleState = ref.watch(vehicleProvider(vechicleId));
+    final userRole = ref.read(authProvider).user!.role;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -32,10 +34,13 @@ class VehicleScreen extends ConsumerWidget {
           title: Text(
               '${vehicleState.vehicle?.id == 0 ? 'Crear' : 'Actualizar'} Vehiculo'),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.supervised_user_circle_outlined),
-            )
+            if (userRole == 'cliente')
+              IconButton(
+                onPressed: () {
+                  context.push('/notifications');
+                },
+                icon: const Icon(Icons.notifications_none_outlined),
+              )
           ],
         ),
         body: vehicleState.isLoading

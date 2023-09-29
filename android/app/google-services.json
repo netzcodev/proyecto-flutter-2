@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "400297506525",
+    "project_id": "cars-app-273ae",
+    "storage_bucket": "cars-app-273ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400297506525:android:dc936d2b96d85c054c4d34",
+        "android_client_info": {
+          "package_name": "com.laredosapp.cars_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvtnftjgahzaqwC1PZlmJQEH7rI9rpu68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

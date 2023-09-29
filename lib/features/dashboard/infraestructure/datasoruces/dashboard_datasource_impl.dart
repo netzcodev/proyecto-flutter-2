@@ -1,6 +1,5 @@
 import 'package:cars_app/config/config.dart';
 import 'package:cars_app/features/dashboard/domain/domain.dart';
-import 'package:cars_app/features/schedules/domain/entities/schedule_entity.dart';
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/domain/entities/service_entity.dart';
 import 'package:cars_app/features/services/infraestructure/infraestructure.dart';
@@ -67,5 +66,66 @@ class DashboardDatasourceImpl implements DashboardDatasource {
     }
 
     return services;
+  }
+
+  @override
+  Future<Service> updateComingService(Map<String, dynamic> data) async {
+    try {
+      const String method = 'PATCH';
+      final String url = '/services/coming/${data['id']}';
+      data.remove('id');
+
+      final response = await dio.request(
+        url,
+        data: data,
+        options: Options(
+          method: method,
+        ),
+      );
+
+      final service = ServiceMapper.jsonToEntity(response.data);
+      return service;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<Schedule> updateComingSchedule(Map<String, dynamic> data) async {
+    try {
+      const String method = 'PATCH';
+      final String url = '/schedules/coming/${data['id']}';
+      data.remove('id');
+
+      final response = await dio.request(
+        url,
+        data: data,
+        options: Options(
+          method: method,
+        ),
+      );
+
+      final schedule = SchedulesMapper.jsonToEntity(response.data);
+      return schedule;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<dynamic> getGeneralReport(int userId) async {
+    final response = await dio.get('/services/report');
+
+    return response.data;
+  }
+
+  @override
+  Future<dynamic> dowloadReport(String url, String path) async {
+    try {
+      final response = await dio.download(url, path, deleteOnError: true);
+      return response;
+    } catch (e) {
+      throw Exception();
+    }
   }
 }

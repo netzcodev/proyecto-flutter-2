@@ -14,14 +14,15 @@ class VehiclesDatasourceImpl extends VehiclesDatasource {
         }));
 
   @override
-  Future<Vehicle> createUpdateVehicles(Map<String, dynamic> vehicleLike) async {
+  Future<Vehicle> createUpdateVehicles(
+      Map<String, dynamic> vehicleLike, String deviceToken) async {
     try {
       final int? vehicleId = vehicleLike['id'];
       final String method = (vehicleId == null) ? 'POST' : 'PATCH';
       vehicleLike.remove('id');
       final String url =
           (vehicleId == null) ? '/vehicles/' : '/vehicles/$vehicleId';
-
+      vehicleLike['firebaseToken'] = deviceToken;
       final response = await dio.request(
         url,
         data: vehicleLike,

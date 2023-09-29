@@ -7,6 +7,7 @@ import 'package:cars_app/features/services/services.dart';
 import 'package:cars_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerWidget {
   final int scheduleId;
@@ -21,6 +22,7 @@ class ScheduleScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleState = ref.watch(scheduleProvider(scheduleId));
     final serviceState = ref.watch(serviceProvider([_serviceId, scheduleId]));
+    final userRole = ref.read(authProvider).user!.role;
     final permissions = ref
         .read(authProvider)
         .user!
@@ -35,11 +37,13 @@ class ScheduleScreen extends ConsumerWidget {
             '${scheduleState.schedule?.id == 0 ? 'Crear' : 'Actualizar'} Cita',
           ),
           actions: [
-            IconButton(
-              onPressed: () => _showServiceDialog(context, ref,
-                  scheduleId: scheduleId, service: serviceState.service!),
-              icon: const Icon(Icons.supervised_user_circle_outlined),
-            )
+            if (userRole == 'cliente')
+              IconButton(
+                onPressed: () {
+                  context.push('/notifications');
+                },
+                icon: const Icon(Icons.notifications_none_outlined),
+              )
           ],
         ),
         body: scheduleState.isLoading

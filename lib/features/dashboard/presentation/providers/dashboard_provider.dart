@@ -5,7 +5,7 @@ import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/services.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:path_provider/path_provider.dart';
 import '../../../shared/infraestructure/services/keyvalue_storage_service.dart';
 
 final dashboardProvider =
@@ -82,6 +82,75 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
       return;
     }
   }
+
+  Future<bool> updateComingService() async {
+    try {
+      final data = {
+        'id': state.comingSchedule!.id!,
+        'date': state.scheduleComingDate
+      };
+
+      final service = await dashboardRepository.updateComingService(data);
+
+      if (service.runtimeType != Null) {
+        state = state.copyWith(comingService: service);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateComingSchedule() async {
+    try {
+      final data = {
+        'id': state.comingSchedule!.id!,
+        'date': state.scheduleComingDate
+      };
+
+      final schedule = await dashboardRepository.updateComingSchedule(data);
+
+      if (schedule.runtimeType != Null) {
+        state = state.copyWith(comingSchedule: schedule);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future setScheduleComingDate(DateTime date) async {
+    state = state.copyWith(scheduleComingDate: date);
+  }
+
+  Future setServiceComingDate(DateTime date) async {
+    state = state.copyWith(serviceComingDate: date);
+  }
+
+  Future<bool> getGeneralReport() async {
+    try {
+      final pdfData =
+          await dashboardRepository.getGeneralReport(authState.user!.id);
+
+      if (pdfData.isNotEmpty) {
+        final dir = await getApplicationDocumentsDirectory();
+        final path = '${dir.path}/${pdfData['filename']}.pdf';
+
+        final download =
+            await dashboardRepository.dowloadReport('/tmpData', path);
+
+        if (download.runtimeType == Null) return false;
+
+        return true;
+      } else {
+        return false; // La cadena de datos está vacía
+      }
+    } catch (e) {
+      return false; // Error al obtener los datos del PDF
+    }
+  }
 }
 
 class DashboardState {
@@ -89,6 +158,8 @@ class DashboardState {
   final bool isLoading;
   final int limit;
   final int offset;
+  final DateTime? scheduleComingDate;
+  final DateTime? serviceComingDate;
   final Schedule? comingSchedule;
   final Service? comingService;
   final List<Service> history;
@@ -100,6 +171,8 @@ class DashboardState {
     this.offset = 0,
     this.comingSchedule,
     this.comingService,
+    this.scheduleComingDate,
+    this.serviceComingDate,
     this.history = const [],
   });
 
@@ -110,6 +183,8 @@ class DashboardState {
     int? offset,
     Schedule? comingSchedule,
     Service? comingService,
+    DateTime? scheduleComingDate,
+    DateTime? serviceComingDate,
     List<Service>? history,
   }) =>
       DashboardState(
@@ -120,5 +195,7 @@ class DashboardState {
         limit: limit ?? this.limit,
         offset: offset ?? this.offset,
         isLastPage: isLastPage ?? this.isLastPage,
+        scheduleComingDate: scheduleComingDate ?? this.scheduleComingDate,
+        serviceComingDate: serviceComingDate ?? this.serviceComingDate,
       );
 }

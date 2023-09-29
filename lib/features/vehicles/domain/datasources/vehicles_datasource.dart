@@ -4,6 +4,7 @@ abstract class VehiclesDatasource {
   Future<List<Vehicle>> getVehiclesByPage({int limit = 10, int offset = 0});
   Future<Vehicle> getVehicleByPlate(String plate);
   Future<Vehicle> getVehicleById(int id);
-  Future<Vehicle> createUpdateVehicles(Map<String, dynamic> vehicleLike);
+  Future<Vehicle> createUpdateVehicles(
+      Map<String, dynamic> vehicleLike, String deviceToken);
   Future<Map<String, dynamic>> deleteVehicle(int id);
 }

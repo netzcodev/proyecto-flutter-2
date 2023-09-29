@@ -6,19 +6,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 
-class VehiclesScreen extends StatelessWidget {
+class VehiclesScreen extends ConsumerWidget {
   const VehiclesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scafoldKey = GlobalKey<ScaffoldState>();
+    final userRole = ref.read(authProvider).user!.role;
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scafoldKey),
       appBar: AppBar(
         title: const Text('Vehiculos'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          if (userRole == 'cliente')
+            IconButton(
+              onPressed: () {
+                context.push('/notifications');
+              },
+              icon: const Icon(Icons.notifications_none_outlined),
+            )
         ],
       ),
       body: const _VehiclesView(),

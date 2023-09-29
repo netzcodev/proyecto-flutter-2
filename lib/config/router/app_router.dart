@@ -5,6 +5,8 @@ import 'package:cars_app/features/calendar/calendar.dart';
 import 'package:cars_app/features/customers/customers.dart';
 import 'package:cars_app/features/dashboard/dashboard.dart';
 import 'package:cars_app/features/employees/employees.dart';
+import 'package:cars_app/features/notificactions/presentation/screens/notifications_details_screen.dart';
+import 'package:cars_app/features/notificactions/presentation/screens/notifications_screen.dart';
 import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
@@ -68,16 +70,16 @@ final goRouterProvider = Provider(
             scheduleId: int.parse(state.pathParameters['id']!),
           ),
         ),
-        // GoRoute(
-        //   path: '/services',
-        //   builder: (context, state) => const ServicesScreen(),
-        // ),
-        // GoRoute(
-        //   path: '/services/:id',
-        //   builder: (context, state) => ServicesScheduleScreen(
-        //     scheduleId: int.parse(state.pathParameters['id']!),
-        //   ),
-        // ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen(),
+        ),
+        GoRoute(
+          path: '/notifications-details/:id',
+          builder: (context, state) => NotificationDetailsScreen(
+            pushMessageId: state.pathParameters['id'] ?? '',
+          ),
+        ),
         GoRoute(
           path: '/vehicles',
           builder: (context, state) => const VehiclesScreen(),

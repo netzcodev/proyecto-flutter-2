@@ -6,8 +6,9 @@ class VehiclesRepositoryImpl extends VehiclesRepository {
   VehiclesRepositoryImpl({required this.datasource});
 
   @override
-  Future<Vehicle> createUpdateVehicles(Map<String, dynamic> vehicleLike) {
-    return datasource.createUpdateVehicles(vehicleLike);
+  Future<Vehicle> createUpdateVehicles(
+      Map<String, dynamic> vehicleLike, String deviceToken) {
+    return datasource.createUpdateVehicles(vehicleLike, deviceToken);
   }
 
   @override

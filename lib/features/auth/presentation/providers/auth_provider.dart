@@ -34,8 +34,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> loginUser(String email, String password) async {
     await Future.delayed(const Duration(microseconds: 500));
+    final firebaseToken =
+        await keyValueStorageService.getKeyValue<String>('firebaseToken');
     try {
-      final user = await authRepository.login(email, password);
+      final user =
+          await authRepository.login(email, password, firebaseToken ?? '');
       _setLoggedUser(user);
     } on CustomError catch (e) {
       logout(error: e.message);
@@ -48,11 +51,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void checkAuthStatus() async {
     final token = await keyValueStorageService.getKeyValue<String>('token');
+    final firebaseToken =
+        await keyValueStorageService.getKeyValue<String>('firebaseToken');
 
     if (token == null) return logout();
 
     try {
-      final user = await authRepository.checkAuthStatus(token);
+      final user =
+          await authRepository.checkAuthStatus(token, firebaseToken ?? '');
       _setLoggedUser(user);
     } catch (e) {
       logout();

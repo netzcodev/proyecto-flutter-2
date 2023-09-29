@@ -1,27 +1,37 @@
 import 'package:cars_app/features/people/people.dart';
+import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service.dart';
+import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final vehiclesProvider =
     StateNotifierProvider<VehiclesNotifier, VehiclesState>((ref) {
   final vehiclesRepository = ref.watch(vehicleRepositoryProvider);
+  final keyValueStorageService = KeyValueStorageServiceImpl();
   ref.watch(peopleProvider.notifier).loadNextPage();
-  return VehiclesNotifier(vehiclesRepository: vehiclesRepository);
+  return VehiclesNotifier(
+    vehiclesRepository: vehiclesRepository,
+    keyValueStorageService: keyValueStorageService,
+  );
 });
 
 class VehiclesNotifier extends StateNotifier<VehiclesState> {
   final VehiclesRepository vehiclesRepository;
+  final KeyValueStorageService keyValueStorageService;
 
   VehiclesNotifier({
     required this.vehiclesRepository,
+    required this.keyValueStorageService,
   }) : super(VehiclesState()) {
     loadNextPage();
   }
 
   Future<bool> createOrUpdateVehicles(Map<String, dynamic> vehicleLike) async {
+    final firebaseToken =
+        await keyValueStorageService.getKeyValue<String>('firebaseToken');
     try {
-      final vehicle =
-          await vehiclesRepository.createUpdateVehicles(vehicleLike);
+      final vehicle = await vehiclesRepository.createUpdateVehicles(
+          vehicleLike, firebaseToken!);
       final isVehicleInList =
           state.vehicles.any((element) => element.id == vehicle.id);
 

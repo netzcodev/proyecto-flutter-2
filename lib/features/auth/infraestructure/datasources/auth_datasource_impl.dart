@@ -12,10 +12,10 @@ class AuthDataSourceImpl extends AuthDataSource {
   );
 
   @override
-  Future<User> checkAuthStatus(String token) async {
+  Future<User> checkAuthStatus(String token, String firebaseToken) async {
     try {
       final response = await dio.get(
-        '/auth/check-status',
+        '/auth/check-status?firebaseToken=$firebaseToken',
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
@@ -39,11 +39,13 @@ class AuthDataSourceImpl extends AuthDataSource {
   }
 
   @override
-  Future<User> login(String email, String password) async {
+  Future<User> login(
+      String email, String password, String firebaseToken) async {
     try {
       final response = await dio.post('/auth/login', data: {
         'username': email,
         'password': password,
+        'firebaseToken': firebaseToken,
       });
 
       final user = UserMapper.userJsonToEntity(response.data);
