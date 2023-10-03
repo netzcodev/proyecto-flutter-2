@@ -14,4 +14,15 @@ class PermissionPartial {
     required this.modify,
     required this.remove,
   });
+
+  @override
+  String toString() {
+    return '''
+      menuName: $menuName
+      add: $add
+      read: $read
+      modify: $modify
+      remove: $remove
+    ''';
+  }
 }

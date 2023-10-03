@@ -92,4 +92,18 @@ class SchedulesDatasourceImpl extends SchedulesDatasource {
 
     return events;
   }
+
+  @override
+  Future<List<String>> getOccupiedTimes(DateTime date, int id) async {
+    final response =
+        await dio.get<List>('/schedules/occupied?date=$date&&id=$id');
+
+    final List<String> times = [];
+
+    for (var time in response.data ?? []) {
+      times.add(time);
+    }
+
+    return times;
+  }
 }

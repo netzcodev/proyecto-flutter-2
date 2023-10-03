@@ -5,7 +5,7 @@ import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final vehiclesProvider =
-    StateNotifierProvider<VehiclesNotifier, VehiclesState>((ref) {
+    StateNotifierProvider.autoDispose<VehiclesNotifier, VehiclesState>((ref) {
   final vehiclesRepository = ref.watch(vehicleRepositoryProvider);
   final keyValueStorageService = KeyValueStorageServiceImpl();
   ref.watch(peopleProvider.notifier).loadNextPage();

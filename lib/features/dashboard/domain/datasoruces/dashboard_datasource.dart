@@ -7,6 +7,6 @@ abstract class DashboardDatasource {
   Future<Schedule?> getComingSchedule(int userId);
   Future<Service> updateComingService(Map<String, dynamic> data);
   Future<Schedule> updateComingSchedule(Map<String, dynamic> data);
-  Future<dynamic> getGeneralReport(int userId);
+  Future<dynamic> getGeneralReport();
   Future<dynamic> dowloadReport(String url, String path);
 }

@@ -22,7 +22,10 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
     loadSchedule();
   }
 
-  Schedule _newEmptySchedule() {
+  Future<Schedule> _newEmptySchedule() async {
+    final occupiedTimes =
+        await schedulesRepository.getOccupiedTimes(DateTime.now(), 0);
+
     return Schedule(
       id: 0,
       customerId: 0,
@@ -32,6 +35,7 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
       name: '',
       description: '',
       services: [],
+      occupiedTimes: occupiedTimes,
     );
   }
 
@@ -40,7 +44,7 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
       if (state.id == 0) {
         state = state.copyWith(
           isLoading: false,
-          schedule: _newEmptySchedule(),
+          schedule: await _newEmptySchedule(),
         );
         return;
       }

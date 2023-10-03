@@ -38,6 +38,7 @@ class DashboardScreen extends ConsumerWidget {
         label: const Text('Reporte'),
         icon: const Icon(Icons.download_outlined),
         onPressed: () {
+          if (ref.read(dashboardProvider).history.isEmpty) return;
           dashboarState.getGeneralReport().then((value) {
             if (!value) {
               _showSnackBar(context, 'No se pudo abrir la url');

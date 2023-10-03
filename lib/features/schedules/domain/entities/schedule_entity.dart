@@ -10,6 +10,7 @@ class Schedule {
   final TimeOfDay time;
   final String name;
   final String description;
+  final List<String>? occupiedTimes;
   final String? createdAt;
   final String? updatedAt;
 
@@ -22,6 +23,7 @@ class Schedule {
     required this.services,
     required this.date,
     required this.time,
+    this.occupiedTimes,
     this.createdAt,
     this.updatedAt,
   });

@@ -1,125 +1,98 @@
 import 'package:flutter/material.dart';
 
-class CustomTimePickerFormField extends StatefulWidget {
-  final bool isTopField;
-  final bool isBottomField;
-  final bool enabled;
-  final String? label;
-  final String? hint;
+class CustomTimeSegmentedControl extends StatefulWidget {
+  final List<String> occupiedTimes;
   final String? errorMessage;
-  final TimeOfDay? initialValue;
-  final Function(TimeOfDay)? onChanged;
+  final Function(TimeOfDay)? onTimeSelected;
+  final TimeOfDay? selected;
 
-  const CustomTimePickerFormField({
-    Key? key,
-    this.isTopField = false,
-    this.isBottomField = false,
-    this.enabled = true,
-    this.label,
-    this.hint,
+  const CustomTimeSegmentedControl({
+    super.key,
+    required this.occupiedTimes,
     this.errorMessage,
-    this.initialValue,
-    this.onChanged,
-  }) : super(key: key);
+    this.onTimeSelected,
+    this.selected,
+  });
 
   @override
-  CustomTimePickerFormFieldState createState() =>
-      CustomTimePickerFormFieldState();
+  State<CustomTimeSegmentedControl> createState() =>
+      _CustomTimeSegmentedControlState();
 }
 
-class CustomTimePickerFormFieldState extends State<CustomTimePickerFormField> {
-  TimeOfDay? _selectedTime;
+class _CustomTimeSegmentedControlState
+    extends State<CustomTimeSegmentedControl> {
+  String? _selectedTime;
+  final List<String> availableTimes = [
+    '8:00 AM',
+    '10:00 AM',
+    '12:00 PM',
+    '2:00 PM',
+    '4:00 PM',
+  ];
+
+  TimeOfDay _stringToTimeOfDay(String time) {
+    final split = time.split(' ');
+    final hourSplit = split[0].split(':');
+    final hour = int.parse(hourSplit[0]);
+    final period = split[1];
+
+    if (period == "PM" && hour != 12) {
+      return TimeOfDay(hour: hour + 12, minute: 0);
+    } else {
+      return TimeOfDay(hour: hour, minute: 0);
+    }
+  }
+
+  String _timeOfDayToString(TimeOfDay time) {
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    return '$hour:${time.minute.toString().padLeft(2, '0')} $period';
+  }
 
   @override
   void initState() {
     super.initState();
-    _selectedTime = widget.initialValue;
+    _selectedTime = _timeOfDayToString(widget.selected!);
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    final border = OutlineInputBorder(
-      borderSide: const BorderSide(color: Colors.transparent),
-      borderRadius: BorderRadius.circular(40),
-    );
-
-    const borderRadius = Radius.circular(15);
-
-    return Container(
-      padding: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: widget.isTopField ? borderRadius : Radius.zero,
-          topRight: widget.isTopField ? borderRadius : Radius.zero,
-          bottomLeft: widget.isBottomField ? borderRadius : Radius.zero,
-          bottomRight: widget.isBottomField ? borderRadius : Radius.zero,
-        ),
-        boxShadow: [
-          if (widget.isBottomField)
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            )
-        ],
-      ),
-      child: TextFormField(
-        enabled: widget.enabled,
-        readOnly: true,
-        onTap: () async {
-          final selectedTime = await showTimePicker(
-            context: context,
-            initialTime: _selectedTime ?? TimeOfDay.now(),
-            initialEntryMode: TimePickerEntryMode.inputOnly,
-          );
-
-          if (selectedTime != null) {
+    return Column(
+      children: [
+        SegmentedButton(
+          multiSelectionEnabled: false,
+          showSelectedIcon: false,
+          segments: availableTimes.map((time) {
+            bool isOccupied = widget.occupiedTimes.contains(time);
+            return ButtonSegment(
+              enabled: !isOccupied,
+              value: time,
+              label: Text(
+                time,
+                style: const TextStyle(fontSize: 13),
+              ),
+            );
+          }).toList(),
+          selected: {_selectedTime},
+          onSelectionChanged: (newSelection) {
+            FocusScope.of(context).unfocus();
             setState(() {
-              _selectedTime = selectedTime;
+              _selectedTime = newSelection.first as String;
             });
-
-            if (widget.onChanged != null) {
-              widget.onChanged!(_selectedTime!);
+            if (widget.onTimeSelected != null) {
+              widget.onTimeSelected!(_stringToTimeOfDay(_selectedTime!));
             }
-          }
-        },
-        controller: TextEditingController(
-          text: _selectedTime != null
-              ? _selectedTime!.format(context)
-              : widget.initialValue != null
-                  ? widget.initialValue!.format(context)
-                  : "",
+          },
         ),
-        style: TextStyle(
-          fontSize: 15,
-          color: widget.enabled ? Colors.black54 : Colors.grey.shade400,
-        ),
-        decoration: InputDecoration(
-          disabledBorder: border,
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-          floatingLabelStyle: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          enabledBorder: border,
-          focusedBorder: border,
-          errorBorder: border.copyWith(
-            borderSide: const BorderSide(color: Colors.transparent),
-          ),
-          focusedErrorBorder: border.copyWith(
-            borderSide: const BorderSide(color: Colors.transparent),
-          ),
-          isDense: true,
-          label: widget.label != null ? Text(widget.label!) : null,
-          hintText: widget.hint,
-          errorText: widget.errorMessage,
-          focusColor: colors.primary,
-        ),
-      ),
+        if (widget.errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              widget.errorMessage!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          )
+      ],
     );
   }
 }

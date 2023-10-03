@@ -6,4 +6,5 @@ abstract class SchedulesDatasource {
   Future<Schedule> getScheduleById(int id);
   Future<Schedule> createUpdateSchedules(Map<String, dynamic> scheduleLike);
   Future<Map<String, dynamic>> deleteSchedule(int id);
+  Future<List<String>> getOccupiedTimes(DateTime date, int id);
 }

@@ -4,6 +4,8 @@ import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/domain/entities/service_entity.dart';
 import 'package:cars_app/features/services/infraestructure/infraestructure.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DashboardDatasourceImpl implements DashboardDatasource {
   final String accessToken;
@@ -113,10 +115,19 @@ class DashboardDatasourceImpl implements DashboardDatasource {
   }
 
   @override
-  Future<dynamic> getGeneralReport(int userId) async {
-    final response = await dio.get('/services/report');
+  Future<dynamic> getGeneralReport() async {
+    final directory = await getExternalStorageDirectory();
+    final taskId = await FlutterDownloader.enqueue(
+      url: '${Environment.apiUrl}/services/report',
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+      savedDir: directory!.path,
+      showNotification: true,
+      openFileFromNotification: true,
+    );
 
-    return response.data;
+    return taskId;
   }
 
   @override

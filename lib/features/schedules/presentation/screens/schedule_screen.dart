@@ -18,6 +18,21 @@ class ScheduleScreen extends ConsumerWidget {
     required this.scheduleId,
   });
 
+  bool isValidDate(String dateToValidate, TimeOfDay timeToValidate) {
+    DateTime dateParsed = DateTime.parse(dateToValidate);
+    DateTime combinedDateTime = DateTime(
+      dateParsed.year,
+      dateParsed.month,
+      dateParsed.day,
+      timeToValidate.hour,
+      timeToValidate.minute,
+    );
+    DateTime now = DateTime.now();
+
+    return combinedDateTime.isAfter(now) ||
+        combinedDateTime.isAtSameMomentAs(now);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleState = ref.watch(scheduleProvider(scheduleId));
@@ -56,6 +71,8 @@ class ScheduleScreen extends ConsumerWidget {
                 ref.watch(authProvider).user!.role != 'cliente')
               FloatingActionButton(
                 onPressed: () {
+                  if (!isValidDate(scheduleState.schedule!.date,
+                      scheduleState.schedule!.time)) return;
                   _showServiceDialog(context, ref,
                       service: serviceState.service!, scheduleId: scheduleId);
                 },
@@ -68,7 +85,12 @@ class ScheduleScreen extends ConsumerWidget {
               heroTag: scheduleState,
               onPressed: () {
                 if (scheduleState.schedule == null) return;
+                if (permissions.add == 0 && scheduleId == 0) return;
                 if (permissions.modify == 0) return;
+                if (!isValidDate(scheduleState.schedule!.date,
+                    scheduleState.schedule!.time)) {
+                  return;
+                }
                 ref
                     .watch(
                         scheduleFormProvider(scheduleState.schedule!).notifier)
@@ -166,6 +188,7 @@ class _ScheduleInformation extends ConsumerWidget {
             errorMessage: scheduleForm.description.errorMessage,
           ),
           CustomDatePickerFormField(
+            isBottomField: true,
             enabled: permissions.modify == 1 ? true : false,
             label: 'fecha',
             initialValue: scheduleForm.date.value,
@@ -173,13 +196,13 @@ class _ScheduleInformation extends ConsumerWidget {
                 ref.read(scheduleFormProvider(schedule).notifier).onDateChanged,
             errorMessage: scheduleForm.date.errorMessage,
           ),
-          CustomTimePickerFormField(
-            enabled: permissions.modify == 1 ? true : false,
-            isBottomField: true,
-            label: 'Hora',
-            initialValue: scheduleForm.time.value,
-            onChanged:
-                ref.read(scheduleFormProvider(schedule).notifier).onTimeChanged,
+          const SizedBox(height: 14),
+          CustomTimeSegmentedControl(
+            occupiedTimes: schedule.occupiedTimes ?? [],
+            selected: schedule.time,
+            onTimeSelected: ref
+                .watch(scheduleFormProvider(schedule).notifier)
+                .onTimeChanged,
             errorMessage: scheduleForm.time.errorMessage,
           ),
           const SizedBox(height: 15),

@@ -34,8 +34,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<dynamic> getGeneralReport(int userId) {
-    return datasource.getGeneralReport(userId);
+  Future<dynamic> getGeneralReport() {
+    return datasource.getGeneralReport();
   }
 
   @override

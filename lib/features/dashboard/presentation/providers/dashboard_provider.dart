@@ -4,8 +4,8 @@ import 'package:cars_app/features/dashboard/presentation/providers/dashboard_rep
 import 'package:cars_app/features/schedules/schedules.dart';
 import 'package:cars_app/features/services/services.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../../shared/infraestructure/services/keyvalue_storage_service.dart';
 
 final dashboardProvider =
@@ -131,24 +131,11 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 
   Future<bool> getGeneralReport() async {
     try {
-      final pdfData =
-          await dashboardRepository.getGeneralReport(authState.user!.id);
-
-      if (pdfData.isNotEmpty) {
-        final dir = await getApplicationDocumentsDirectory();
-        final path = '${dir.path}/${pdfData['filename']}.pdf';
-
-        final download =
-            await dashboardRepository.dowloadReport('/tmpData', path);
-
-        if (download.runtimeType == Null) return false;
-
-        return true;
-      } else {
-        return false; // La cadena de datos está vacía
-      }
+      final taskId = await dashboardRepository.getGeneralReport();
+      await FlutterDownloader.open(taskId: taskId);
+      return true;
     } catch (e) {
-      return false; // Error al obtener los datos del PDF
+      return false;
     }
   }
 }

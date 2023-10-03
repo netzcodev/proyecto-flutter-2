@@ -18,6 +18,7 @@ class SchedulesMapper {
             json['services'] == null || List.from(json['services']).isEmpty
                 ? []
                 : ServiceMapper.jsonToListEntity(json['services']),
+        occupiedTimes: List<String>.from(json['occupiedTimes'] ?? []),
         createdAt: json['createdAt'],
         updatedAt: json['updatedAt'],
       );

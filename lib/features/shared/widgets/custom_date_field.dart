@@ -48,6 +48,18 @@ class CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> {
     _textController.text = formattedDate;
   }
 
+  DateTime getFirstSelectableDate(DateTime now) {
+    DateTime firstDate = (now.hour > 16 || (now.hour == 16 && now.minute > 0))
+        ? DateTime.now().add(const Duration(days: 1))
+        : DateTime.now();
+
+    while (firstDate.weekday == 7) {
+      firstDate = firstDate.add(const Duration(days: 1));
+    }
+
+    return firstDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -83,12 +95,22 @@ class CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> {
         readOnly: true,
         controller: _textController,
         onTap: () async {
+          final DateTime now = DateTime.now();
+          DateTime firstSelectableDate = getFirstSelectableDate(now);
+
           final selectedDate = await showDatePicker(
             context: context,
-            initialDate: _selectedDate ?? DateTime.now(),
-            firstDate: DateTime(2000),
+            initialDate: DateTime.now(),
+            firstDate: firstSelectableDate,
             lastDate: DateTime(2101),
-            selectableDayPredicate: (day) => day.weekday != 7,
+            selectableDayPredicate: (day) {
+              // Si es domingo o es antes de la fecha actual, retorna false
+              if (day.weekday == 7 ||
+                  day.isBefore(DateTime(now.year, now.month, now.day, 0, 0))) {
+                return false;
+              }
+              return true;
+            },
           );
 
           if (selectedDate != null) {

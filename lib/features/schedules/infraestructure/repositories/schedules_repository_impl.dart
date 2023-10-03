@@ -29,4 +29,9 @@ class SchedulesRepositoryImpl extends SchedulesRepository {
   Future<List<Schedule>> getSchedulesByWeek(int weekNumber) {
     return datasource.getSchedulesByWeek(weekNumber);
   }
+
+  @override
+  Future<List<String>> getOccupiedTimes(DateTime date, int id) {
+    return datasource.getOccupiedTimes(date, id);
+  }
 }
