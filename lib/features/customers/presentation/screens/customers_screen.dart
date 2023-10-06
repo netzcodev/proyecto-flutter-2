@@ -6,12 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 
-class CustomersScreen extends StatelessWidget {
+class CustomersScreen extends ConsumerWidget {
   const CustomersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scafoldKey = GlobalKey<ScaffoldState>();
+    final permissions = ref
+        .read(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'Customers');
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scafoldKey),
@@ -24,6 +29,7 @@ class CustomersScreen extends StatelessWidget {
       body: const _CustomersView(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          if (permissions.add == 0) return;
           context.push('/customers/0');
         },
         label: const Text('Cliente'),

@@ -1,14 +1,13 @@
-import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service.dart';
 import 'package:cars_app/features/shared/infraestructure/services/keyvalue_storage_service_impl.dart';
 import 'package:cars_app/features/vehicles/vehicles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final vehiclesProvider =
-    StateNotifierProvider.autoDispose<VehiclesNotifier, VehiclesState>((ref) {
+    StateNotifierProvider<VehiclesNotifier, VehiclesState>((ref) {
   final vehiclesRepository = ref.watch(vehicleRepositoryProvider);
   final keyValueStorageService = KeyValueStorageServiceImpl();
-  ref.watch(peopleProvider.notifier).loadNextPage();
+
   return VehiclesNotifier(
     vehiclesRepository: vehiclesRepository,
     keyValueStorageService: keyValueStorageService,
@@ -99,10 +98,40 @@ class VehiclesNotifier extends StateNotifier<VehiclesState> {
       vehicles: [...state.vehicles, ...vehicles],
     );
   }
+
+  Future firstLoad() async {
+    if (state.isLoading || state.isLastPage || !state.isFirstLoad) return;
+
+    state = state.copyWith(
+      isLoading: true,
+    );
+
+    final vehicles = await vehiclesRepository.getVehiclesByPage(
+      limit: state.limit,
+      offset: state.offset,
+    );
+
+    if (vehicles.isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        isLastPage: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      isLastPage: false,
+      isLoading: false,
+      isFirstLoad: false,
+      offset: 10,
+      vehicles: [...state.vehicles, ...vehicles],
+    );
+  }
 }
 
 class VehiclesState {
   final bool isLastPage;
+  final bool isFirstLoad;
   final int limit;
   final int offset;
   final bool isLoading;
@@ -110,6 +139,7 @@ class VehiclesState {
 
   VehiclesState({
     this.isLastPage = false,
+    this.isFirstLoad = true,
     this.limit = 10,
     this.offset = 0,
     this.isLoading = false,
@@ -118,6 +148,7 @@ class VehiclesState {
 
   VehiclesState copyWith({
     bool? isLastPage,
+    bool? isFirstLoad,
     int? limit,
     int? offset,
     bool? isLoading,
@@ -125,6 +156,7 @@ class VehiclesState {
   }) =>
       VehiclesState(
         isLastPage: isLastPage ?? this.isLastPage,
+        isFirstLoad: isFirstLoad ?? this.isFirstLoad,
         limit: limit ?? this.limit,
         offset: offset ?? this.offset,
         isLoading: isLoading ?? this.isLoading,

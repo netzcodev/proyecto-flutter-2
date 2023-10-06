@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:cars_app/features/people/people.dart';
 import 'package:cars_app/features/schedules/domain/domain.dart';
 import 'package:cars_app/features/schedules/presentation/providers/providers.dart';
+import 'package:cars_app/features/vehicles/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -10,6 +11,7 @@ final schedulesProvider =
     StateNotifierProvider.autoDispose<SchedulesNotifier, SchedulesState>((ref) {
   final schedulesRepository = ref.watch(schedulesRepositoryProvider);
   ref.watch(peopleProvider.notifier).firstLoad();
+  ref.watch(vehiclesProvider.notifier).firstLoad();
   return SchedulesNotifier(schedulesRepository: schedulesRepository);
 });
 

@@ -6,12 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 
-class EmployeesScreen extends StatelessWidget {
+class EmployeesScreen extends ConsumerWidget {
   const EmployeesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scafoldKey = GlobalKey<ScaffoldState>();
+    final permissions = ref
+        .read(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'Employees');
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scafoldKey),
@@ -24,6 +29,7 @@ class EmployeesScreen extends StatelessWidget {
       body: const _EmployeesView(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          if (permissions.add == 0) return;
           context.push('/employees/0');
         },
         label: const Text('Mecánico'),

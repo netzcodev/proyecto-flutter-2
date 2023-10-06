@@ -46,3 +46,24 @@ Todo está manejado por capas, y todas las capas tienen una archivo barril para 
 - Manejo de roles y permisos.
 - Vista de calendario
 
+
+para cambiar el nombre del la app
+```
+flutter pub run change_app_package_name:main com.laredosapp.cars_app
+```
+
+Para cambiar icono de la aplicación
+```
+flutter pub run flutter_launcher_icons
+```
+
+Para generar las llaves de carga de la aplicación
+
+```
+  keytool -genkey -v -keystore %userprofile%\upload-keystore.jks ^ -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 ^ -alias upload
+
+```
+Andriod App Bundle AAB
+```
+flutter build appbundle
+```

@@ -110,7 +110,8 @@ class PeopleNotifier extends StateNotifier<PeopleState> {
     state = state.copyWith(
       isLastPage: false,
       isLoading: false,
-      offset: state.offset + 10,
+      isFirstLoad: false,
+      offset: 10,
       people: [...state.people, ...people],
     );
   }

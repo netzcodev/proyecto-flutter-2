@@ -8,7 +8,6 @@ final serviceFormProvider = StateNotifierProvider.autoDispose
     .family<ServiceFormNotifier, ServiceFormState, Service>((ref, service) {
   final createUpdateCallback =
       ref.watch(servicesProvider.notifier).createOrUpdateServices;
-
   return ServiceFormNotifier(
     service: service,
     onSubmitCallBack: createUpdateCallback,

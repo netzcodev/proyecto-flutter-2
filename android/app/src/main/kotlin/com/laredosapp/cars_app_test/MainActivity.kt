@@ -1,4 +1,4 @@
-package com.laredosapp.cars_app
+package com.laredosapp.cars_app_test
 
 import io.flutter.embedding.android.FlutterActivity
 

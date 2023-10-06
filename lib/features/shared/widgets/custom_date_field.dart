@@ -100,13 +100,12 @@ class CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> {
 
           final selectedDate = await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
+            initialDate: firstSelectableDate,
             firstDate: firstSelectableDate,
             lastDate: DateTime(2101),
             selectableDayPredicate: (day) {
               // Si es domingo o es antes de la fecha actual, retorna false
-              if (day.weekday == 7 ||
-                  day.isBefore(DateTime(now.year, now.month, now.day, 0, 0))) {
+              if (day.weekday == 7) {
                 return false;
               }
               return true;

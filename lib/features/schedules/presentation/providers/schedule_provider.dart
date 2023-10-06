@@ -23,8 +23,15 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
   }
 
   Future<Schedule> _newEmptySchedule() async {
-    final occupiedTimes =
-        await schedulesRepository.getOccupiedTimes(DateTime.now(), 0);
+    DateTime fecha;
+
+    if (DateTime.now().hour > 16) {
+      fecha = DateTime.now().add(const Duration(days: 1));
+    } else {
+      fecha = DateTime.now();
+    }
+
+    final occupiedTimes = await schedulesRepository.getOccupiedTimes(fecha, 0);
 
     return Schedule(
       id: 0,
@@ -58,6 +65,24 @@ class ScheduleNotifier extends StateNotifier<ScheduleState> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> changeOccupiedTimes(DateTime fecha) async {
+    final occupiedTimes =
+        await schedulesRepository.getOccupiedTimes(fecha, state.id);
+
+    state = state.copyWith(
+      schedule: Schedule(
+        customerId: state.schedule!.customerId,
+        employeeId: state.schedule!.employeeId,
+        name: state.schedule!.name,
+        description: state.schedule!.description,
+        services: state.schedule!.services,
+        date: fecha.toString(),
+        time: state.schedule!.time,
+        occupiedTimes: occupiedTimes,
+      ),
+    );
   }
 }
 

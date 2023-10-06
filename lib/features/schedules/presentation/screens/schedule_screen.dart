@@ -5,6 +5,7 @@ import 'package:cars_app/features/schedules/domain/domain.dart';
 import 'package:cars_app/features/schedules/presentation/providers/providers.dart';
 import 'package:cars_app/features/services/services.dart';
 import 'package:cars_app/features/shared/shared.dart';
+// import 'package:cars_app/features/vehicles/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,14 +19,35 @@ class ScheduleScreen extends ConsumerWidget {
     required this.scheduleId,
   });
 
-  bool isValidDate(String dateToValidate, TimeOfDay timeToValidate) {
+  bool isValidDate(String dateToValidate, dynamic timeToValidate) {
     DateTime dateParsed = DateTime.parse(dateToValidate);
+    int hour;
+    int minute;
+
+    if (timeToValidate is String) {
+      final isPM = timeToValidate.contains('PM');
+      List<String> timeParts = timeToValidate.split(':');
+      hour = int.parse(timeParts[0].trim());
+      minute = int.parse(timeParts[1].split(' ')[0].trim());
+
+      if (hour == 12) {
+        hour = isPM ? 12 : 0;
+      } else if (isPM) {
+        hour += 12;
+      }
+    } else if (timeToValidate is TimeOfDay) {
+      hour = timeToValidate.hour;
+      minute = timeToValidate.minute;
+    } else {
+      throw ArgumentError('timeToValidate debe ser de tipo String o TimeOfDay');
+    }
+
     DateTime combinedDateTime = DateTime(
       dateParsed.year,
       dateParsed.month,
       dateParsed.day,
-      timeToValidate.hour,
-      timeToValidate.minute,
+      hour,
+      minute,
     );
     DateTime now = DateTime.now();
 
@@ -71,8 +93,13 @@ class ScheduleScreen extends ConsumerWidget {
                 ref.watch(authProvider).user!.role != 'cliente')
               FloatingActionButton(
                 onPressed: () {
-                  if (!isValidDate(scheduleState.schedule!.date,
-                      scheduleState.schedule!.time)) return;
+                  if (scheduleId != 0) {
+                    if (!isValidDate(scheduleState.schedule!.date,
+                        scheduleState.schedule!.time)) {
+                      return;
+                    }
+                  }
+                  // ref.read(vehiclesProvider.notifier).loadNextPage();
                   _showServiceDialog(context, ref,
                       service: serviceState.service!, scheduleId: scheduleId);
                 },
@@ -87,9 +114,11 @@ class ScheduleScreen extends ConsumerWidget {
                 if (scheduleState.schedule == null) return;
                 if (permissions.add == 0 && scheduleId == 0) return;
                 if (permissions.modify == 0) return;
-                if (!isValidDate(scheduleState.schedule!.date,
-                    scheduleState.schedule!.time)) {
-                  return;
+                if (scheduleId != 0) {
+                  if (!isValidDate(scheduleState.schedule!.date,
+                      scheduleState.schedule!.time)) {
+                    return;
+                  }
                 }
                 ref
                     .watch(
@@ -192,11 +221,32 @@ class _ScheduleInformation extends ConsumerWidget {
             enabled: permissions.modify == 1 ? true : false,
             label: 'fecha',
             initialValue: scheduleForm.date.value,
-            onChanged:
-                ref.read(scheduleFormProvider(schedule).notifier).onDateChanged,
+            onChanged: (value) {
+              ref
+                  .read(scheduleFormProvider(schedule).notifier)
+                  .onDateChanged(value);
+              ref
+                  .read(scheduleProvider(schedule.id ?? 0).notifier)
+                  .changeOccupiedTimes(value);
+            },
             errorMessage: scheduleForm.date.errorMessage,
           ),
           const SizedBox(height: 14),
+          if (schedule.id != 0 && schedule.id != null)
+            Row(
+              children: [
+                const Text(
+                  'Hora: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(schedule.time.format(context))
+              ],
+            ),
+          if (schedule.id != 0 && schedule.id != null)
+            const SizedBox(height: 14),
           CustomTimeSegmentedControl(
             occupiedTimes: schedule.occupiedTimes ?? [],
             selected: schedule.time,

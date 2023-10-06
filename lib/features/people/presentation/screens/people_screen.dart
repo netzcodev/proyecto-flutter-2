@@ -7,12 +7,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 
-class PeopleScreen extends StatelessWidget {
+class PeopleScreen extends ConsumerWidget {
   const PeopleScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scafoldKey = GlobalKey<ScaffoldState>();
+    final permissions = ref
+        .read(authProvider)
+        .user!
+        .menu!
+        .firstWhere((element) => element.menuName == 'People');
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scafoldKey),
@@ -28,6 +33,7 @@ class PeopleScreen extends StatelessWidget {
       body: const _PeopleView(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          if (permissions.add == 0) return;
           context.push('/people/0');
         },
         label: const Text('persona'),
